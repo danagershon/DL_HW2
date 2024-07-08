@@ -268,6 +268,7 @@ class Linear(Layer):
         #   - db, the gradient of the loss with respect to b
         #  Note: You should ACCUMULATE gradients in dw and db.
         # ====== YOUR CODE: ======
+        dout = dout.type(torch.FloatTensor) #TODO: UNSURE - ask piazza
         dx = torch.matmul(dout, self.w)
         self.dw += torch.matmul(dout.T, x)
         self.db += dout.sum(dim=0)

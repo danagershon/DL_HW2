@@ -293,7 +293,7 @@ class LayerTrainer(Trainer):
 
     def train_batch(self, batch) -> BatchResult:
         X, y = batch
-        print(X.shape)
+        
         # TODO: Train the Layer model on one batch of data.
         #  - Forward pass
         #  - Backward pass
@@ -305,8 +305,12 @@ class LayerTrainer(Trainer):
         
         y_pred = self.model.forward(X)
         #
-        num_correct = len(y_pred == y)
+        #print((y_pred == y).sum())
+        num_correct = int((y_pred == y).sum())
         loss = self.loss_fn(y_pred, y)
+        print("org", y[0])
+        print("pred", y_pred[0].max())
+        print("pred arg", y_pred[0].argmax())
         #
         self.model.backward(y) #update grads
         self.optimizer.step()
