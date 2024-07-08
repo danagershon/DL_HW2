@@ -397,7 +397,8 @@ class Sequential(Layer):
         # TODO: Implement the forward pass by passing each layer's output
         #  as the input of the next.
         # ====== YOUR CODE: ======
-        out = x
+        out = x.reshape(x.shape[0], -1) #TODO: UNSURE - check piazza
+        
         for layer in self.layers:
             out = layer(out, **kw)
         # ========================
