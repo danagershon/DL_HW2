@@ -302,17 +302,20 @@ class LayerTrainer(Trainer):
         #    not a tensor) as num_correct.
         # ====== YOUR CODE: ======
         self.optimizer.zero_grad()
-        
         y_pred = self.model.forward(X)
         #
-        #print((y_pred == y).sum())
-        num_correct = int((y_pred == y).sum())
-        loss = self.loss_fn(y_pred, y)
-        print("org", y[0])
-        print("pred", y_pred[0].max())
-        print("pred arg", y_pred[0].argmax())
+        #print("my pred", y_pred.argmax(dim=1))
+        #print("my y", y)
+        truth_mask = (y_pred.argmax(dim=1) == y).nonzero()
+        num_correct = truth_mask.numel() #NumElements
+
+        #Compute Loss
+        loss = self.loss_fn.forward(y_pred, y)
         #
-        self.model.backward(y) #update grads
+        #Compute Loss Gradient
+        loss_grad = self.loss_fn.backward(y_pred)
+        #Update Model Gradients from loss
+        self.model.backward(loss_grad)
         self.optimizer.step()
         # ========================
 
