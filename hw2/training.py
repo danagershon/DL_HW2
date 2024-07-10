@@ -83,7 +83,13 @@ class Trainer(abc.ABC):
             #  - Use the train/test_epoch methods.
             #  - Save losses and accuracies in the lists above.
             # ====== YOUR CODE: ======
-            raise NotImplementedError()
+            train_result = self.train_epoch(dl_train)
+            test_result = self.test_epoch(dl_test)
+            #Save
+            train_loss.append(train_result.losses)
+            train_acc.append(train_result.acc)
+            test_loss.append(test_result.losses)
+            test_acc.append(test_result.acc)
             # ========================
 
             # TODO:
@@ -94,11 +100,13 @@ class Trainer(abc.ABC):
             #    the checkpoints argument.
             if best_acc is None or test_result.accuracy > best_acc:
                 # ====== YOUR CODE: ======
-                raise NotImplementedError()
+                pass
+                #raise NotImplementedError()
                 # ========================
             else:
                 # ====== YOUR CODE: ======
-                raise NotImplementedError()
+                pass
+                #raise NotImplementedError()
                 # ========================
 
         return FitResult(actual_num_epochs, train_loss, train_acc, test_loss, test_acc)
@@ -326,7 +334,12 @@ class LayerTrainer(Trainer):
 
         # TODO: Evaluate the Layer model on one batch of data.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        #TODO: UNSURE - FIX THIS AFTER train_batch
+        y_pred = self.model.forward(X)
+        truth_mask = (y_pred.argmax(dim=1) == y).nonzero()
+        num_correct = truth_mask.numel() #NumElements
+        #Compute Loss
+        loss = self.loss_fn.forward(y_pred, y)
         # ========================
 
         return BatchResult(loss, num_correct)
