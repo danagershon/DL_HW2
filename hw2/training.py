@@ -87,9 +87,9 @@ class Trainer(abc.ABC):
             test_result = self.test_epoch(dl_test)
             #Save
             train_loss.append(train_result.losses)
-            train_acc.append(train_result.acc)
+            train_acc.append(train_result.accuracy)
             test_loss.append(test_result.losses)
-            test_acc.append(test_result.acc)
+            test_acc.append(test_result.accuracy)
             # ========================
 
             # TODO:

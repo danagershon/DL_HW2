@@ -92,11 +92,13 @@ class MomentumSGD(Optimizer):
 
         # TODO: Add your own initializations as needed.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        self.velocity = [] * len(self.params)
+        for p,dp in self.params:
+            self.velocity.append(torch.zeros(dp.shape)) #Acts as v_i[t]
         # ========================
 
     def step(self):
-        for p, dp in self.params:
+        for i, (p, dp) in enumerate(self.params): #TODO: UNSURE ASK PIAZZA
             if dp is None:
                 continue
 
@@ -104,7 +106,11 @@ class MomentumSGD(Optimizer):
             # update the parameters tensor based on the velocity. Don't forget
             # to include the regularization term.
             # ====== YOUR CODE: ======
-            raise NotImplementedError()
+            dp += self.reg * p #grad of L2 regularization
+            #Update velocity
+            self.velocity[i] = self.momentum * self.velocity[i] - self.learn_rate * dp
+            #Update p from velocity
+            p += self.velocity[i]
             # ========================
 
 
