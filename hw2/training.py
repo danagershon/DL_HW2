@@ -310,6 +310,7 @@ class LayerTrainer(Trainer):
         #    not a tensor) as num_correct.
         # ====== YOUR CODE: ======
         self.optimizer.zero_grad()
+        X = X.view(X.size(0), -1)
         y_pred = self.model.forward(X)
         #
         truth_mask = (y_pred.argmax(dim=1) == y).nonzero()
@@ -333,6 +334,7 @@ class LayerTrainer(Trainer):
         # TODO: Evaluate the Layer model on one batch of data.
         # ====== YOUR CODE: ======
         #TODO: UNSURE - FIX THIS AFTER train_batch
+        X = X.view(X.size(0), -1)
         y_pred = self.model.forward(X)
         truth_mask = (y_pred.argmax(dim=1) == y).nonzero()
         num_correct = truth_mask.numel() #NumElements
