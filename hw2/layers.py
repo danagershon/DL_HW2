@@ -325,7 +325,7 @@ class CrossEntropyLoss(Layer):
     def backward(self, dout=1.0):
         """
         :param dout: Gradient with respect to layer output, a scalar which
-            defaults to 1 since the output of forward is scalar.
+            defaults to 1 since the output of forwb0fa40137cd7e0ce27ddb0069d3c51210a5ab4b2ard is scalar.
         :return: Gradient with respect to layer input (only x), shape (N,D)
         """
         x = self.grad_cache["x"]

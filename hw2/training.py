@@ -312,8 +312,6 @@ class LayerTrainer(Trainer):
         self.optimizer.zero_grad()
         y_pred = self.model.forward(X)
         #
-        #print("my pred", y_pred.argmax(dim=1))
-        #print("my y", y)
         truth_mask = (y_pred.argmax(dim=1) == y).nonzero()
         num_correct = truth_mask.numel() #NumElements
 
@@ -321,7 +319,7 @@ class LayerTrainer(Trainer):
         loss = self.loss_fn.forward(y_pred, y)
         #
         #Compute Loss Gradient
-        loss_grad = self.loss_fn.backward(y_pred)
+        loss_grad = self.loss_fn.backward()
         #Update Model Gradients from loss
         self.model.backward(loss_grad)
         self.optimizer.step()
