@@ -357,17 +357,19 @@ class Dropout(Layer):
         super().__init__()
         assert 0.0 <= p < 1.0
         self.p = p
+        self.binary_mask = None
 
     def forward(self, x, **kw):
         # TODO: Implement the dropout forward pass.
         #  Notice that contrary to previous layers, this layer behaves
         #  differently a according to the current training_mode (train/test).
         # ====== YOUR CODE: ======
-        if(not self.training_mode):
-            return x
-        distribution = torch.distributions.Bernoulli(probs=self.p) # p prob to be 1
-        self.binary_mask = 1-distribution.sample(sample_shape=x.shape) #p prob to be 0
-        out = x * self.binary_mask / (1-self.p) #1-self.p
+        if self.training_mode:
+            distribution = torch.distributions.Bernoulli(probs=self.p) # p prob to be 1
+            self.binary_mask = 1-distribution.sample(sample_shape=x.shape) #p prob to be 0
+            out = x * self.binary_mask / (1 - self.p)  # scale 
+        else:
+            out = x  # don't drop activations in testing
         # ========================
 
         return out
@@ -376,7 +378,10 @@ class Dropout(Layer):
         # TODO: Implement the dropout backward pass.
         # ====== YOUR CODE: ======
         #Assume you run this after forward
-        dx = dout * self.binary_mask
+        if self.training_mode:
+            dx = dout * self.binary_mask / (1 - self.p)  # scale
+        else:
+            dx = dout
         # ========================
 
         return dx

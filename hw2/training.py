@@ -83,12 +83,14 @@ class Trainer(abc.ABC):
             #  - Use the train/test_epoch methods.
             #  - Save losses and accuracies in the lists above.
             # ====== YOUR CODE: ======
-            train_result = self.train_epoch(dl_train) #TODO: HW2
-            test_result = self.test_epoch(dl_test)
-            #Save
-            train_loss += train_result.losses
+
+            train_result = self.train_epoch(dl_train, verbose=verbose, **kw)
+            test_result = self.test_epoch(dl_test, verbose=verbose, **kw)
+            
+            #Save losses and accurcies
+            train_loss.extend(train_result.losses)
             train_acc.append(train_result.accuracy)
-            test_loss += test_result.losses
+            test_loss.extend(test_result.losses)
             test_acc.append(test_result.accuracy)
             # ========================
 
@@ -100,14 +102,21 @@ class Trainer(abc.ABC):
             #    the checkpoints argument.
             if best_acc is None or test_result.accuracy > best_acc:
                 # ====== YOUR CODE: ======
-                pass
-                #raise NotImplementedError()
+                best_acc = test_result.accuracy
+                epochs_without_improvement = 0
+
+                if checkpoints:
+                    self.save_checkpoint(checkpoints)
                 # ========================
             else:
                 # ====== YOUR CODE: ======
-                pass
-                #raise NotImplementedError()
+                epochs_without_improvement += 1
                 # ========================
+
+            if early_stopping and epochs_without_improvement >= early_stopping:
+                break
+
+            actual_num_epochs += 1
 
         return FitResult(actual_num_epochs, train_loss, train_acc, test_loss, test_acc)
 
@@ -294,7 +303,7 @@ class ClassifierTrainer(Trainer):
 class LayerTrainer(Trainer):
     def __init__(self, model, loss_fn, optimizer):
         # ====== YOUR CODE: ======
-        self.model = model
+        super().__init__(model)
         self.loss_fn = loss_fn
         self.optimizer = optimizer
         # ========================
@@ -309,21 +318,29 @@ class LayerTrainer(Trainer):
         #  - Calculate number of correct predictions (make sure it's an int,
         #    not a tensor) as num_correct.
         # ====== YOUR CODE: ======
+
+        if self.device:  # TODO LEFT: check if this is needed
+            X, y = X.to(self.device), y.to(self.device)
+
         self.optimizer.zero_grad()
-        X = X.view(X.size(0), -1)
-        y_pred = self.model.forward(X)
-        #
+        X = X.view(X.size(0), -1)  # flatten X - needed since MLP expected 2-dim tensor
+        
+        # forward pass - compute model prediction on the batch
+        y_pred = self.model(X)
+        
+        # compute number of correct predictions
         truth_mask = (y_pred.argmax(dim=1) == y).nonzero()
         num_correct = truth_mask.numel() #NumElements
 
         #Compute Loss
-        loss = self.loss_fn.forward(y_pred, y)
-        #
+        loss = self.loss_fn(y_pred, y)
+        
         #Compute Loss Gradient
-        loss_grad = self.loss_fn.backward()
+        loss_grad = self.loss_fn.backward()  # note that loss 'backward' input grad is 1.0 by default
         #Update Model Gradients from loss
         self.model.backward(loss_grad)
-        self.optimizer.step()
+        self.optimizer.step()  # optimize model parameters
+
         # ========================
 
         return BatchResult(loss, num_correct)
@@ -333,13 +350,20 @@ class LayerTrainer(Trainer):
 
         # TODO: Evaluate the Layer model on one batch of data.
         # ====== YOUR CODE: ======
-        #TODO: UNSURE - FIX THIS AFTER train_batch
-        X = X.view(X.size(0), -1)
-        y_pred = self.model.forward(X)
+
+        if self.device:  # TODO LEFT: check if this is needed
+            X, y = X.to(self.device), y.to(self.device)
+
+        X = X.view(X.size(0), -1)  # flatten X - needed since MLP expected 2-dim tensor
+
+        # forward pass - compute model prediction on the batch
+        y_pred = self.model(X)  
+
+        # compute number of correct predictions
         truth_mask = (y_pred.argmax(dim=1) == y).nonzero()
         num_correct = truth_mask.numel() #NumElements
         #Compute Loss
-        loss = self.loss_fn.forward(y_pred, y)
+        loss = self.loss_fn(y_pred, y)
         # ========================
 
         return BatchResult(loss, num_correct)

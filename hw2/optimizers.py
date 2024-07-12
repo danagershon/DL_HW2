@@ -92,13 +92,11 @@ class MomentumSGD(Optimizer):
 
         # TODO: Add your own initializations as needed.
         # ====== YOUR CODE: ======
-        self.velocity = [] * len(self.params)
-        for p,dp in self.params:
-            self.velocity.append(torch.zeros(dp.shape)) #Acts as v_i[t]
+        self.velocity = [torch.zeros_like(p) for p, dp in self.params] #Acts as v_i[t]
         # ========================
 
     def step(self):
-        for i, (p, dp) in enumerate(self.params): #TODO: UNSURE ASK PIAZZA
+        for i, (p, dp) in enumerate(self.params):
             if dp is None:
                 continue
 
@@ -131,9 +129,7 @@ class RMSProp(Optimizer):
 
         # TODO: Add your own initializations as needed.
         # ====== YOUR CODE: ======
-        self.r = [] * len(self.params)
-        for p,dp in self.params:
-            self.r.append(torch.zeros(dp.shape)) #Acts as v_i[t]
+        self.r = [torch.zeros_like(p) for p, dp in self.params]
         # ========================
 
     def step(self):
@@ -148,7 +144,7 @@ class RMSProp(Optimizer):
             # ====== YOUR CODE: ======
             dp += self.reg * p #grad of L2 regularization
             #Update r
-            self.r[i] = self.decay * self.r[i] + (1-self.decay) * dp.pow(2)
-            #Update p from velocity
-            p -= (self.learn_rate / torch.sqrt(self.eps + self.r[i]))* dp
+            self.r[i] = self.decay * self.r[i] + (1 - self.decay) * dp.pow(2)
+            #Update p from
+            p -= (self.learn_rate / torch.sqrt(self.eps + self.r[i])) * dp
             # ========================
