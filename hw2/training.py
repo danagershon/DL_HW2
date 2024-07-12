@@ -83,12 +83,12 @@ class Trainer(abc.ABC):
             #  - Use the train/test_epoch methods.
             #  - Save losses and accuracies in the lists above.
             # ====== YOUR CODE: ======
-            train_result = self.train_epoch(dl_train)
+            train_result = self.train_epoch(dl_train) #TODO: HW2
             test_result = self.test_epoch(dl_test)
             #Save
-            train_loss.append(train_result.losses)
+            train_loss += train_result.losses
             train_acc.append(train_result.accuracy)
-            test_loss.append(test_result.losses)
+            test_loss += test_result.losses
             test_acc.append(test_result.accuracy)
             # ========================
 
@@ -310,10 +310,9 @@ class LayerTrainer(Trainer):
         #    not a tensor) as num_correct.
         # ====== YOUR CODE: ======
         self.optimizer.zero_grad()
+        X = X.view(X.size(0), -1)
         y_pred = self.model.forward(X)
         #
-        #print("my pred", y_pred.argmax(dim=1))
-        #print("my y", y)
         truth_mask = (y_pred.argmax(dim=1) == y).nonzero()
         num_correct = truth_mask.numel() #NumElements
 
@@ -321,7 +320,7 @@ class LayerTrainer(Trainer):
         loss = self.loss_fn.forward(y_pred, y)
         #
         #Compute Loss Gradient
-        loss_grad = self.loss_fn.backward(y_pred)
+        loss_grad = self.loss_fn.backward()
         #Update Model Gradients from loss
         self.model.backward(loss_grad)
         self.optimizer.step()
@@ -335,6 +334,7 @@ class LayerTrainer(Trainer):
         # TODO: Evaluate the Layer model on one batch of data.
         # ====== YOUR CODE: ======
         #TODO: UNSURE - FIX THIS AFTER train_batch
+        X = X.view(X.size(0), -1)
         y_pred = self.model.forward(X)
         truth_mask = (y_pred.argmax(dim=1) == y).nonzero()
         num_correct = truth_mask.numel() #NumElements

@@ -325,7 +325,7 @@ class CrossEntropyLoss(Layer):
     def backward(self, dout=1.0):
         """
         :param dout: Gradient with respect to layer output, a scalar which
-            defaults to 1 since the output of forward is scalar.
+            defaults to 1 since the output of forwb0fa40137cd7e0ce27ddb0069d3c51210a5ab4b2ard is scalar.
         :return: Gradient with respect to layer input (only x), shape (N,D)
         """
         x = self.grad_cache["x"]
@@ -365,10 +365,9 @@ class Dropout(Layer):
         # ====== YOUR CODE: ======
         if(not self.training_mode):
             return x
-        distribution = torch.distributions.Bernoulli(probs=self.p) #p prob to get *1*
-        binary_mask = 1-distribution.sample(sample_shape=x.shape) #p prob to get *0*
-        self.binary_mask = binary_mask
-        out = x * binary_mask * (1-self.p)
+        distribution = torch.distributions.Bernoulli(probs=self.p) # p prob to be 1
+        self.binary_mask = 1-distribution.sample(sample_shape=x.shape) #p prob to be 0
+        out = x * self.binary_mask / (1-self.p) #1-self.p
         # ========================
 
         return out
@@ -404,8 +403,7 @@ class Sequential(Layer):
         # TODO: Implement the forward pass by passing each layer's output
         #  as the input of the next.
         # ====== YOUR CODE: ======
-        out = x.reshape(x.shape[0], -1) #TODO: UNSURE - check piazza
-        
+        out = x
         for layer in self.layers:
             out = layer(out, **kw)
         # ========================
