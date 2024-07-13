@@ -80,7 +80,18 @@ class CNN(nn.Module):
         #  Note: If N is not divisible by P, then N mod P additional
         #  CONV->ACTs should exist at the end, without a POOL after them.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        self.current_in_channels = in_channels
+        i = 0
+        for i in range(len(self.channels)):
+            chn = self.channels[i]
+            layers.append(torch.nn.Conv2d(self.current_in_channels, chn, **self.conv_params))
+            self.current_in_channels = chn
+
+            if((i+1) % self.pool_every == 0):
+                layers.append(torch.nn.MaxPool2d(**self.pooling_params))
+        
+        print(layers)
+        self.last_cnn_layer = layers[-1]
 
         # ========================
         seq = nn.Sequential(*layers)
@@ -109,7 +120,13 @@ class CNN(nn.Module):
         #  - The last Linear layer should have an output dim of out_classes.
         mlp: MLP = None
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        #self.current_in_channels = number of features from cnn
+        #TODO: missing activation params
+        #print(self.last_cnn_layer.out_channels, self.last_cnn_layer.kernel_size)
+        full_kernel_size = self.last_cnn_layer.kernel_size[0] * self.last_cnn_layer.kernel_size[1]
+        flatten_input_size = self.last_cnn_layer.out_channels * full_kernel_size
+        #print(flatten_input_size)
+        mlp = MLP(flatten_input_size, self.out_classes, self.hidden_dims) #TODO: HW2 self.activation_type for some reason gives error
         # ========================
         return mlp
 
