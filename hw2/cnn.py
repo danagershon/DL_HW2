@@ -86,12 +86,12 @@ class CNN(nn.Module):
             chn = self.channels[i]
             layers.append(torch.nn.Conv2d(self.current_in_channels, chn, **self.conv_params))
             self.current_in_channels = chn
-
+            self.last_cnn_layer = layers[-1]
+            
             if((i+1) % self.pool_every == 0):
                 layers.append(torch.nn.MaxPool2d(**self.pooling_params))
         
         print(layers)
-        self.last_cnn_layer = layers[-1]
 
         # ========================
         seq = nn.Sequential(*layers)
@@ -120,13 +120,15 @@ class CNN(nn.Module):
         #  - The last Linear layer should have an output dim of out_classes.
         mlp: MLP = None
         # ====== YOUR CODE: ======
-        #self.current_in_channels = number of features from cnn
         #TODO: missing activation params
-        #print(self.last_cnn_layer.out_channels, self.last_cnn_layer.kernel_size)
-        full_kernel_size = self.last_cnn_layer.kernel_size[0] * self.last_cnn_layer.kernel_size[1]
+        full_kernel_size = self.last_cnn_layer.kernel_size[0] * self.last_cnn_layer.kernel_size[1] #TODO: UNSURE what to do if kernel_size isn't square
         flatten_input_size = self.last_cnn_layer.out_channels * full_kernel_size
-        #print(flatten_input_size)
-        mlp = MLP(flatten_input_size, self.out_classes, self.hidden_dims) #TODO: HW2 self.activation_type for some reason gives error
+        #print(f"Flattened input size for MLP {flatten_input_size}")
+        layer_dims = self.hidden_dims + [self.out_classes]
+        activations_dims = [ACTIVATIONS[self.activation_type](**self.activation_params)] * len(layer_dims)
+        #print(f"Layer dims: {layer_dims}")
+        #print(f"Activations dim: {activations_dims}")
+        mlp = MLP(flatten_input_size, layer_dims, activations_dims) #TODO: HW2 self.activation_type for some reason gives error
         # ========================
         return mlp
 
