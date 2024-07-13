@@ -81,17 +81,33 @@ class CNN(nn.Module):
         #  CONV->ACTs should exist at the end, without a POOL after them.
         # ====== YOUR CODE: ======
         self.current_in_channels = in_channels
+        self.last_channels, self.last_h, self.last_w = in_channels, in_h, in_w
+        
         i = 0
         for i in range(len(self.channels)):
             chn = self.channels[i]
             layers.append(torch.nn.Conv2d(self.current_in_channels, chn, **self.conv_params))
             self.current_in_channels = chn
-            self.last_cnn_layer = layers[-1]
             
+            #Calculate shape of output
+            self.last_channels = chn
+            h, w = self.last_h, self.last_w
+
+            #TODO: HW2 maybe make this vectorized
+            self.last_h = (h + 2*layers[-1].padding[0] - layers[-1].dilation[0] * (layers[-1].kernel_size[0] - 1) - 1) // layers[-1].stride[0] + 1
+            self.last_w = (w + 2*layers[-1].padding[1] - layers[-1].dilation[1] * (layers[-1].kernel_size[1] - 1) - 1) // layers[-1].stride[1] + 1
+            #
+
+            #MaxPooling
             if((i+1) % self.pool_every == 0):
-                layers.append(torch.nn.MaxPool2d(**self.pooling_params))
+                layers.append(POOLINGS[self.pooling_type](**self.pooling_params))
+                h, w = self.last_h, self.last_w
+
+                #TODO: HW2 maybe make this vectorized - also copied from the top..
+                self.last_h = (h + 2*layers[-1].padding - layers[-1].dilation * (layers[-1].kernel_size - 1) - 1) // layers[-1].stride + 1
+                self.last_w = (w + 2*layers[-1].padding - layers[-1].dilation * (layers[-1].kernel_size - 1) - 1) // layers[-1].stride + 1
         
-        print(layers)
+        #print(layers)
 
         # ========================
         seq = nn.Sequential(*layers)
@@ -106,7 +122,8 @@ class CNN(nn.Module):
         rng_state = torch.get_rng_state()
         try:
             # ====== YOUR CODE: ======
-            raise NotImplementedError()
+            self.mlp_input_size = self.last_h * self.last_w * self.last_channels
+            print(f"Flattened input size for MLP {self.mlp_input_size}")
             # ========================
         finally:
             torch.set_rng_state(rng_state)
@@ -121,14 +138,11 @@ class CNN(nn.Module):
         mlp: MLP = None
         # ====== YOUR CODE: ======
         #TODO: missing activation params
-        full_kernel_size = self.last_cnn_layer.kernel_size[0] * self.last_cnn_layer.kernel_size[1] #TODO: UNSURE what to do if kernel_size isn't square
-        flatten_input_size = self.last_cnn_layer.out_channels * full_kernel_size
-        #print(f"Flattened input size for MLP {flatten_input_size}")
+        self._n_features()
         layer_dims = self.hidden_dims + [self.out_classes]
         activations_dims = [ACTIVATIONS[self.activation_type](**self.activation_params)] * len(layer_dims)
-        #print(f"Layer dims: {layer_dims}")
-        #print(f"Activations dim: {activations_dims}")
-        mlp = MLP(flatten_input_size, layer_dims, activations_dims) #TODO: HW2 self.activation_type for some reason gives error
+        
+        mlp = MLP(self.mlp_input_size, layer_dims, activations_dims)
         # ========================
         return mlp
 
@@ -138,7 +152,11 @@ class CNN(nn.Module):
         #  return class scores.
         out: Tensor = None
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        x_features = self.feature_extractor.forward(x)
+        print(f"MLP forward {x_features.shape}")
+        x_features = x_features.view(x_features.size(0), -1) #TODO: HW2 - flatten
+        print(f"MLP forward 2 {x_features.shape}")
+        out = self.mlp.forward(x_features)
         # ========================
         return out
 

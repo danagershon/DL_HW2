@@ -354,7 +354,7 @@ class LayerTrainer(Trainer):
         if self.device:  # TODO LEFT: check if this is needed
             X, y = X.to(self.device), y.to(self.device)
 
-        X = X.view(X.size(0), -1)  # flatten X - needed since MLP expected 2-dim tensor
+        X = X.view(X.size(0), -1)  # TODO: HW2 - flatten X - needed since MLP expected 2-dim tensor
 
         # forward pass - compute model prediction on the batch
         y_pred = self.model(X)  
