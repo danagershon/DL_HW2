@@ -274,7 +274,26 @@ class ClassifierTrainer(Trainer):
         #  - Update parameters
         #  - Classify and calculate number of correct predictions
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        #TODO: HW2 - unsure if this was just copy paste and changing functions to allow for torch.nn modules??
+        if self.device:  # TODO LEFT: check if this is needed
+            X, y = X.to(self.device), y.to(self.device)
+
+        self.optimizer.zero_grad()
+        
+        # forward pass - compute model prediction on the batch
+        y_pred = self.model.forward(X)
+        # compute number of correct predictions
+        truth_mask = (y_pred.argmax(axis=1) == y).nonzero()
+        num_correct = truth_mask.numel() #NumElements
+
+        #Compute Loss
+        batch_loss = self.loss_fn(y_pred, y)
+        
+        #Compute Loss Gradient
+        loss_grad = batch_loss.backward()
+        
+        #Update Model Gradients from loss
+        self.optimizer.step()  # optimize model parameters
         # ========================
 
         return BatchResult(batch_loss, num_correct)
@@ -294,7 +313,18 @@ class ClassifierTrainer(Trainer):
             #  - Forward pass
             #  - Calculate number of correct predictions
             # ====== YOUR CODE: ======
-            raise NotImplementedError()
+            #TODO: HW2 really not sure if  this is supposed to be copy paste
+            if self.device:  # TODO LEFT: check if this is needed
+                X, y = X.to(self.device), y.to(self.device)
+
+            # forward pass - compute model prediction on the batch
+            y_pred = self.model.classify(X)  
+    
+            # compute number of correct predictions
+            truth_mask = (y_pred == y).nonzero()
+            num_correct = truth_mask.numel() #NumElements
+            #Compute Loss
+            batch_loss = self.loss_fn(y_pred, y)
             # ========================
 
         return BatchResult(batch_loss, num_correct)

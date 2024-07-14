@@ -83,7 +83,6 @@ class CNN(nn.Module):
         self.current_in_channels = in_channels
         self.last_channels, self.last_h, self.last_w = in_channels, in_h, in_w
         
-        i = 0
         for i in range(len(self.channels)):
             chn = self.channels[i]
             layers.append(torch.nn.Conv2d(self.current_in_channels, chn, **self.conv_params))
@@ -123,7 +122,7 @@ class CNN(nn.Module):
         try:
             # ====== YOUR CODE: ======
             self.mlp_input_size = self.last_h * self.last_w * self.last_channels
-            print(f"Flattened input size for MLP {self.mlp_input_size}")
+            #print(f"Flattened input size for MLP {self.mlp_input_size}")
             # ========================
         finally:
             torch.set_rng_state(rng_state)
@@ -137,7 +136,6 @@ class CNN(nn.Module):
         #  - The last Linear layer should have an output dim of out_classes.
         mlp: MLP = None
         # ====== YOUR CODE: ======
-        #TODO: missing activation params
         self._n_features()
         layer_dims = self.hidden_dims + [self.out_classes]
         activations_dims = [ACTIVATIONS[self.activation_type](**self.activation_params)] * len(layer_dims)
@@ -153,9 +151,9 @@ class CNN(nn.Module):
         out: Tensor = None
         # ====== YOUR CODE: ======
         x_features = self.feature_extractor.forward(x)
-        print(f"MLP forward {x_features.shape}")
+        #print(f"MLP forward {x_features.shape}")
         x_features = x_features.view(x_features.size(0), -1) #TODO: HW2 - flatten
-        print(f"MLP forward 2 {x_features.shape}")
+        #print(f"MLP forward flattened {x_features.shape}")
         out = self.mlp.forward(x_features)
         # ========================
         return out
