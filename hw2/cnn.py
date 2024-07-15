@@ -84,18 +84,9 @@ class CNN(nn.Module):
         self.last_channels, self.last_h, self.last_w = in_channels, in_h, in_w
         
         for i in range(len(self.channels)):
-            chn = self.channels[i]
-            layers.append(torch.nn.Conv2d(self.current_in_channels, chn, **self.conv_params))
-            self.current_in_channels = chn
-            
-            #Calculate shape of output
-            self.last_channels = chn
-            h, w = self.last_h, self.last_w
-
-            #TODO: HW2 maybe make this vectorized
-            self.last_h = (h + 2*layers[-1].padding[0] - layers[-1].dilation[0] * (layers[-1].kernel_size[0] - 1) - 1) // layers[-1].stride[0] + 1
-            self.last_w = (w + 2*layers[-1].padding[1] - layers[-1].dilation[1] * (layers[-1].kernel_size[1] - 1) - 1) // layers[-1].stride[1] + 1
-            #
+            layers.append(torch.nn.Conv2d(self.current_in_channels, self.channels[i], **self.conv_params))
+            layers.append(ACTIVATIONS[self.activation_type](**self.activation_params))
+            self.current_in_channels = self.channels[i]
 
             #MaxPooling
             if((i+1) % self.pool_every == 0):
@@ -105,8 +96,6 @@ class CNN(nn.Module):
                 #TODO: HW2 maybe make this vectorized - also copied from the top..
                 self.last_h = (h + 2*layers[-1].padding - layers[-1].dilation * (layers[-1].kernel_size - 1) - 1) // layers[-1].stride + 1
                 self.last_w = (w + 2*layers[-1].padding - layers[-1].dilation * (layers[-1].kernel_size - 1) - 1) // layers[-1].stride + 1
-        
-        #print(layers)
 
         # ========================
         seq = nn.Sequential(*layers)
@@ -121,6 +110,21 @@ class CNN(nn.Module):
         rng_state = torch.get_rng_state()
         try:
             # ====== YOUR CODE: ======
+            self.last_channels, self.last_h, self.last_w = tuple(self.in_size)
+            
+            layers = list(self.feature_extractor.children())
+            print(layers)
+            for i in range(len(self.channels)):
+                if(type(layers[i]) == type(torch.nn.Conv2d(1, 1, 1)) or type(layers[i]) == type(POOLINGS[self.pooling_type](1))): #TODO LEFT fix types here
+                    #Calculate shape of output
+                    self.last_channels = self.channels[i]
+                    h, w = self.last_h, self.last_w
+        
+                    #TODO: HW2 maybe make this vectorized
+                    self.last_h = (h + 2*layers[i].padding[0] - layers[i].dilation[0] * (layers[i].kernel_size[0] - 1) - 1) // layers[i].stride[0] + 1
+                    self.last_w = (w + 2*layers[i].padding[1] - layers[i].dilation[1] * (layers[i].kernel_size[1] - 1) - 1) // layers[i].stride[1] + 1
+                    #
+            
             self.mlp_input_size = self.last_h * self.last_w * self.last_channels
             #print(f"Flattened input size for MLP {self.mlp_input_size}")
             # ========================
@@ -214,14 +218,40 @@ class ResidualBlock(nn.Module):
         #  - Don't create layers which you don't use! This will prevent
         #    correct comparison in the test.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        self.main_path, self.shortcut_path = [], [torch.nn.Identity()] #TODO LEFT just to make sure we are allowed
+        self.current_in_channels = in_channels
+        
+        for i in range(len(channels)):
+            #Convolution
+            self.main_path.append(torch.nn.Conv2d(self.current_in_channels, channels[i], kernel_size=kernel_sizes[i], padding=kernel_sizes[i]//2)) #valid padding to ensure conservation of spatial resolution
+            #Dropout
+            if(dropout > 0):
+                self.main_path.append(nn.Dropout(dropout))
+            #Batch Normalization
+            if(batchnorm):
+                self.main_path.append(nn.BatchNorm2d(channels[i]))
+            #ReLU, except for last
+            if(i < len(channels)-1):
+                self.main_path.append(nn.ReLU(*activation_params) if activation_type == "relu" else nn.LeakyReLU(*activation_params))
+            #Remember Last Channel
+            self.current_in_channels = channels[i]
+
+        #Last Channel:
+        if(self.current_in_channels != in_channels):
+            #self.main_path.append(torch.nn.Conv2d(self.current_in_channels, self.current_in_channels, kernel_size=1)) #TODO LEFT is this needed?
+            self.shortcut_path.append(torch.nn.Conv2d(in_channels, self.current_in_channels, kernel_size=1, bias=False)) #Projection
+
+        self.main_path = nn.Sequential(*self.main_path) #TODO LEFT just to make sure we are allowed
+        self.shortcut_path = nn.Sequential(*self.shortcut_path)
         # ========================
 
     def forward(self, x: Tensor):
         # TODO: Implement the forward pass. Save the main and residual path to `out`.
         out: Tensor = None
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        y = self.main_path.forward(x)
+        z = self.shortcut_path.forward(x)
+        out = y + z
         # ========================
         out = torch.relu(out)
         return out
