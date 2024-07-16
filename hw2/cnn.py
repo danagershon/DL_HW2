@@ -81,7 +81,6 @@ class CNN(nn.Module):
         #  CONV->ACTs should exist at the end, without a POOL after them.
         # ====== YOUR CODE: ======
         self.current_in_channels = in_channels
-        self.last_channels, self.last_h, self.last_w = in_channels, in_h, in_w
         
         for i in range(len(self.channels)):
             layers.append(torch.nn.Conv2d(self.current_in_channels, self.channels[i], **self.conv_params))
@@ -157,7 +156,7 @@ class CNN(nn.Module):
         # ====== YOUR CODE: ======
         x_features = self.feature_extractor.forward(x)
         #print(f"MLP forward {x_features.shape}")
-        x_features = x_features.view(x_features.size(0), -1) #TODO: HW2 - flatten
+        x_features = x_features.view(x_features.size(0), -1) #TODO LEFT- flatten
         #print(f"MLP forward flattened {x_features.shape}")
         out = self.mlp.forward(x_features)
         # ========================
@@ -345,7 +344,26 @@ class ResNet(CNN):
         #    2 + len(inner_channels). [1 for each 1X1 proection convolution] + [# inner convolutions].
         # - Use batchnorm and dropout as requested.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        self.current_in_channels = in_channels
+        last_full_block = len(self.channels) // self.pool_every * self.pool_every
+        print(list(range(0, last_full_block, self.pool_every)))
+        print("N - N mod p=", last_full_block)
+        for block in range(0, last_full_block, self.pool_every):
+            print("b, bp:", block, block + self.pool_every)
+
+            if(not self.bottleneck):
+                layers.append(ResidualBlock(self.current_in_channels, self.channels[block : block + self.pool_every], [3]*self.pool_every, self.batchnorm, self.dropout)) #TODO LEFT  padding=1, stride=1
+
+            self.current_in_channels = self.channels[block + self.pool_every - 1] #TODO LEFT understand why its -1
+            
+            #MaxPooling
+            layers.append(POOLINGS[self.pooling_type](**self.pooling_params))
+            
+        #Last M
+        if(not self.bottleneck):
+                layers.append(ResidualBlock(self.current_in_channels, self.channels[last_full_block : ], [3]*(len(self.channels) % self.pool_every), self.batchnorm, self.dropout)) #TODO LEFT  padding=1, stride=1
+        
+        print(layers)
         # ========================
         seq = nn.Sequential(*layers)
         return seq
