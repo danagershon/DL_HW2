@@ -108,7 +108,6 @@ class CNN(nn.Module):
             #Easy solution:
             z = torch.zeros((1,*self.in_size))
             y = self.feature_extractor.forward(z)
-            print(y.shape)
             
             self.mlp_input_size = y.shape[1] * y.shape[2] * y.shape[3]
             '''
@@ -225,7 +224,7 @@ class ResidualBlock(nn.Module):
         
         for i in range(len(channels)):
             #Convolution
-            self.main_path.append(torch.nn.Conv2d(self.current_in_channels, channels[i], kernel_size=kernel_sizes[i], padding=kernel_sizes[i]//2)) #valid padding to ensure conservation of spatial resolution
+            self.main_path.append(torch.nn.Conv2d(self.current_in_channels, channels[i], kernel_size=kernel_sizes[i], padding=kernel_sizes[i]//2, bias=True)) #valid padding to ensure conservation of spatial resolution
             #Dropout
             if(dropout > 0):
                 self.main_path.append(nn.Dropout(dropout))
@@ -234,7 +233,7 @@ class ResidualBlock(nn.Module):
                 self.main_path.append(nn.BatchNorm2d(channels[i]))
             #ReLU, except for last
             if(i < len(channels)-1):
-                self.main_path.append(nn.ReLU(*activation_params) if activation_type == "relu" else nn.LeakyReLU(*activation_params))
+                self.main_path.append(nn.ReLU(*activation_params, **ACTIVATION_DEFAULT_KWARGS['relu']) if activation_type == "relu" else nn.LeakyReLU(*activation_params, **ACTIVATION_DEFAULT_KWARGS['lrelu']))
             #Remember Last Channel
             self.current_in_channels = channels[i]
 
@@ -243,8 +242,8 @@ class ResidualBlock(nn.Module):
             #self.main_path.append(torch.nn.Conv2d(self.current_in_channels, self.current_in_channels, kernel_size=1)) #TODO LEFT is this needed?
             self.shortcut_path.append(torch.nn.Conv2d(in_channels, self.current_in_channels, kernel_size=1, bias=False)) #Projection
 
-        self.main_path = nn.Sequential(*self.main_path) #TODO LEFT just to make sure we are allowed
-        self.shortcut_path = nn.Sequential(*self.shortcut_path)
+        self.main_path = nn.Sequential(*self.main_path, **kwargs) #TODO LEFT just to make sure we are allowed
+        self.shortcut_path = nn.Sequential(*self.shortcut_path, **kwargs)
         # ========================
 
     def forward(self, x: Tensor):
@@ -295,7 +294,9 @@ class ResidualBottleneckBlock(ResidualBlock):
         #  Initialize the base class in the right way to produce the bottleneck block
         #  architecture.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        channels = [inner_channels[0]] + inner_channels + [in_out_channels]
+        kernel_sizes = [1] + inner_kernel_sizes + [1]
+        super().__init__(in_out_channels, channels, kernel_sizes, **kwargs)
         # ========================
 
 
