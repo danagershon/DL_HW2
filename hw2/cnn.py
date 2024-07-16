@@ -91,11 +91,6 @@ class CNN(nn.Module):
             #MaxPooling
             if((i+1) % self.pool_every == 0):
                 layers.append(POOLINGS[self.pooling_type](**self.pooling_params))
-                h, w = self.last_h, self.last_w
-
-                #TODO: HW2 maybe make this vectorized - also copied from the top..
-                self.last_h = (h + 2*layers[-1].padding - layers[-1].dilation * (layers[-1].kernel_size - 1) - 1) // layers[-1].stride + 1
-                self.last_w = (w + 2*layers[-1].padding - layers[-1].dilation * (layers[-1].kernel_size - 1) - 1) // layers[-1].stride + 1
 
         # ========================
         seq = nn.Sequential(*layers)
@@ -110,6 +105,13 @@ class CNN(nn.Module):
         rng_state = torch.get_rng_state()
         try:
             # ====== YOUR CODE: ======
+            #Easy solution:
+            z = torch.zeros((1,*self.in_size))
+            y = self.feature_extractor.forward(z)
+            print(y.shape)
+            
+            self.mlp_input_size = y.shape[1] * y.shape[2] * y.shape[3]
+            '''
             self.last_channels, self.last_h, self.last_w = tuple(self.in_size)
             
             layers = list(self.feature_extractor.children())
@@ -126,7 +128,7 @@ class CNN(nn.Module):
                     #
             
             self.mlp_input_size = self.last_h * self.last_w * self.last_channels
-            #print(f"Flattened input size for MLP {self.mlp_input_size}")
+            #print(f"Flattened input size for MLP {self.mlp_input_size}")'''
             # ========================
         finally:
             torch.set_rng_state(rng_state)
