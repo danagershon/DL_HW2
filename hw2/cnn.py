@@ -144,7 +144,7 @@ class CNN(nn.Module):
         # ====== YOUR CODE: ======
         self._n_features()
         layer_dims = self.hidden_dims + [self.out_classes]
-        activations_dims = [ACTIVATIONS[self.activation_type](**self.activation_params)] * len(layer_dims)
+        activations_dims = [ACTIVATIONS[self.activation_type](**self.activation_params, **ACTIVATION_DEFAULT_KWARGS[self.activation_type])] * len(self.hidden_dims) + [ACTIVATIONS["none"](**self.activation_params, **ACTIVATION_DEFAULT_KWARGS["none"])]
         
         mlp = MLP(self.mlp_input_size, layer_dims, activations_dims)
         # ========================
