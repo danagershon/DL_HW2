@@ -141,6 +141,16 @@ def cnn_experiment(
     
     #Train
     fit_res = trainer.fit(dl_train, dl_test, epochs, checkpoints, early_stopping, max_batches=batches) #print_every = 1
+    
+    #fix cfg: #TODO LEFT is this ok?
+    ''' To Strings:
+    trainer_cls = ClassifierTrainer, #Trainer
+    classifier_cls = ArgMaxClassifier, #Classifier
+    optimizer_cls = torch.optim.SGD, #Optimizer
+    '''
+    cfg["trainer_cls"] = str(type(trainer_cls))
+    cfg["classifier_cls"] = str(type(classifier_cls))
+    cfg["optimizer_cls"] = str(type(optimizer_cls))
     # ========================
 
     save_experiment(run_name, out_dir, cfg, fit_res)
@@ -148,7 +158,7 @@ def cnn_experiment(
 
 def save_experiment(run_name, out_dir, cfg, fit_res):
     output = dict(config=cfg, results=fit_res._asdict())
-    print(output)
+    
     cfg_LK = (
         f'L{cfg["layers_per_block"]}_K'
         f'{"-".join(map(str, cfg["filters_per_layer"]))}'
