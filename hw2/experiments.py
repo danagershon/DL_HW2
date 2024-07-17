@@ -60,7 +60,7 @@ def cnn_experiment(
     # Training params
     bs_train=128,
     bs_test=None,
-    batches=100,
+    batches=100, #max batches
     epochs=100,
     early_stopping=3,
     checkpoints=None,
@@ -78,7 +78,7 @@ def cnn_experiment(
     trainer_cls = ClassifierTrainer, #Trainer
     classifier_cls = ArgMaxClassifier, #Classifier
     optimizer_cls = torch.optim.SGD, #Optimizer
-    optimizer_params : dict = {"lr":1e-3, "weight_decay":0.1, "momentum":0.9, "loss_fn": torch.nn.CrossEntropyLoss()}, 
+    optimizer_params : dict = {"loss_fn": torch.nn.CrossEntropyLoss(), "lr":1e-3, "weight_decay":0.1, "momentum":0.9}, 
     **kw,
 ):
     """
@@ -120,28 +120,27 @@ def cnn_experiment(
     for filter_size in filters_per_layer:
         channels += [filter_size] * layers_per_block
     
-    ds_train_data = ds_train.data.transpose(0, 3, 1, 2) #to fit the N,C,W,H format
-    in_size = ds_train_data.data.shape[1:]
+    x0,_ = ds_train[0]
+    in_size = x0.shape
     out_classes = len(ds_train.classes) #10
     #print(in_size, out_classes, channels, pool_every, hidden_dims, conv_params,pooling_params)
+    
     model = model_cls(in_size, out_classes, channels, pool_every, hidden_dims, conv_params=conv_params, pooling_params=pooling_params, **kw)
 
     #Init Trainer
     classifier_model = classifier_cls(model)
     
-    loss_fn = optimizer_params.pop('loss_fn')
+    loss_fn = optimizer_params.pop("loss_fn")
     optimizer = optimizer_cls(params=model.parameters(), **optimizer_params)
     
     trainer = trainer_cls(classifier_model, loss_fn, optimizer, device)
 
-    #print(model)
-    
     #DataLoaders
     dl_train = torch.utils.data.DataLoader(ds_train, bs_train, shuffle=False)
     dl_test = torch.utils.data.DataLoader(ds_test, bs_test, shuffle=False)
     
     #Train
-    fit_res = trainer.fit(dl_train, dl_test, epochs, checkpoints, early_stopping) #print_every = 1
+    fit_res = trainer.fit(dl_train, dl_test, epochs, checkpoints, early_stopping, max_batches=batches) #print_every = 1
 
     # ========================
 

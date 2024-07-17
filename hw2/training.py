@@ -318,11 +318,11 @@ class ClassifierTrainer(Trainer):
                 X, y = X.to(self.device), y.to(self.device)
 
             # forward pass - compute model prediction on the batch
-            y_pred = self.model.classify(X)  
-    
+            y_pred = self.model.forward(X)
             # compute number of correct predictions
-            truth_mask = (y_pred == y).nonzero()
+            truth_mask = (y_pred.argmax(axis=1) == y).nonzero()
             num_correct = truth_mask.numel() #NumElements
+            
             #Compute Loss
             batch_loss = self.loss_fn(y_pred, y)
             # ========================
