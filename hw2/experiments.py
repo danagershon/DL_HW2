@@ -141,7 +141,7 @@ def cnn_experiment(
     
     #Train
     fit_res = trainer.fit(dl_train, dl_test, epochs, checkpoints, early_stopping, max_batches=batches) #print_every = 1
-
+    print(fit_res)
     # ========================
 
     save_experiment(run_name, out_dir, cfg, fit_res)

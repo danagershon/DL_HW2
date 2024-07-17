@@ -294,6 +294,8 @@ class ClassifierTrainer(Trainer):
         
         #Update Model Gradients from loss
         self.optimizer.step()  # optimize model parameters
+
+        batch_loss = batch_loss.item() #TODO LEFT check if this is correct
         # ========================
 
         return BatchResult(batch_loss, num_correct)
@@ -324,7 +326,7 @@ class ClassifierTrainer(Trainer):
             num_correct = truth_mask.numel() #NumElements
             
             #Compute Loss
-            batch_loss = self.loss_fn(y_pred, y)
+            batch_loss = self.loss_fn(y_pred, y).item()
             # ========================
 
         return BatchResult(batch_loss, num_correct)
