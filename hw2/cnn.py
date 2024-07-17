@@ -218,6 +218,8 @@ class ResidualBlock(nn.Module):
         #  - Don't create layers which you don't use! This will prevent
         #    correct comparison in the test.
         # ====== YOUR CODE: ======
+        channels = channels + [channels[-1]]
+        kernel_sizes = kernel_sizes + [kernel_sizes[-1]]
         self.main_path, self.shortcut_path = [], [torch.nn.Identity()] #TODO LEFT just to make sure we are allowed
         self.current_in_channels = in_channels
         
@@ -225,20 +227,19 @@ class ResidualBlock(nn.Module):
             #Convolution
             self.main_path.append(torch.nn.Conv2d(self.current_in_channels, channels[i], kernel_size=kernel_sizes[i], padding=kernel_sizes[i]//2, bias=True)) #valid padding to ensure conservation of spatial resolution
             #Dropout
-            if(dropout > 0):
+            if(dropout > 0 and i < len(channels)-1):
                 self.main_path.append(nn.Dropout(dropout))
             #Batch Normalization
-            if(batchnorm):
+            if(batchnorm and i < len(channels)-1):
                 self.main_path.append(nn.BatchNorm2d(channels[i]))
             #ReLU, except for last
             if(i < len(channels)-1):
-                self.main_path.append(nn.ReLU(*activation_params, **ACTIVATION_DEFAULT_KWARGS['relu']) if activation_type == "relu" else nn.LeakyReLU(*activation_params, **ACTIVATION_DEFAULT_KWARGS['lrelu']))
+                self.main_path.append(ACTIVATIONS[activation_type](**activation_params, **ACTIVATION_DEFAULT_KWARGS[activation_type]))
             #Remember Last Channel
             self.current_in_channels = channels[i]
 
         #Last Channel:
         if(self.current_in_channels != in_channels):
-            #self.main_path.append(torch.nn.Conv2d(self.current_in_channels, self.current_in_channels, kernel_size=1)) #TODO LEFT is this needed?
             self.shortcut_path.append(torch.nn.Conv2d(in_channels, self.current_in_channels, kernel_size=1, bias=False)) #Projection
 
         self.main_path = nn.Sequential(*self.main_path, **kwargs) #TODO LEFT just to make sure we are allowed

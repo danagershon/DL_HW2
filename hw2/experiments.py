@@ -71,6 +71,8 @@ def cnn_experiment(
     hidden_dims=[1024],
     model_type="cnn",
     # You can add extra configuration for your experiments here
+    conv_params: dict = {"kernel_size":3},
+    pooling_params: dict = {"kernel_size":2},
     **kw,
 ):
     """
@@ -107,7 +109,26 @@ def cnn_experiment(
     #   for you automatically.
     fit_res = None
     # ====== YOUR CODE: ======
-    raise NotImplementedError()
+    '''
+        in_size,
+        out_classes,
+        channels,
+        pool_every,
+        hidden_dims,
+        batchnorm=False,
+        dropout=0.0,
+        bottleneck: bool = False,
+        **kwargs,
+    '''
+    channels = []
+    for filter_size in filters_per_layer:
+        channels += [filter_size] * layers_per_block
+    #print(help(CIFAR10))
+    ds_train_data = ds_train.data.transpose(0, 3, 1, 2) #to fit the N,C,W,H format
+    in_size = ds_train_data.data.shape[1:]
+    out_classes = len(ds_train.classes) #10
+    
+    model = model_cls(in_size, out_classes, channels, pool_every, hidden_dims, conv_params=conv_params, pooling_params=pooling_params, **kw)
     # ========================
 
     save_experiment(run_name, out_dir, cfg, fit_res)
