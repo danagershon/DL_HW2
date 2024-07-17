@@ -281,16 +281,18 @@ class ClassifierTrainer(Trainer):
         self.optimizer.zero_grad()
         
         # forward pass - compute model prediction on the batch
-        y_pred = self.model.forward(X)
+        output = self.model(X)
+        y_pred = self.model.classify_scores(output)
         # compute number of correct predictions
-        truth_mask = (y_pred.argmax(axis=1) == y).nonzero()
-        num_correct = truth_mask.numel() #NumElements
+        """truth_mask = (y_pred.argmax(axis=1) == y).nonzero()
+        num_correct = truth_mask.numel() #NumElements"""
+        num_correct = (y_pred == y).sum().item()
 
         #Compute Loss
-        batch_loss = self.loss_fn(y_pred, y)
+        batch_loss = self.loss_fn(output, y)
         
         #Compute Loss Gradient
-        loss_grad = batch_loss.backward()
+        batch_loss.backward()
         
         #Update Model Gradients from loss
         self.optimizer.step()  # optimize model parameters
@@ -320,13 +322,14 @@ class ClassifierTrainer(Trainer):
                 X, y = X.to(self.device), y.to(self.device)
 
             # forward pass - compute model prediction on the batch
-            y_pred = self.model.forward(X)
+            output = self.model(X)
+            y_pred = self.model.classify_scores(output)
             # compute number of correct predictions
             truth_mask = (y_pred.argmax(axis=1) == y).nonzero()
             num_correct = truth_mask.numel() #NumElements
             
             #Compute Loss
-            batch_loss = self.loss_fn(y_pred, y).item()
+            batch_loss = self.loss_fn(output, y).item()
             # ========================
 
         return BatchResult(batch_loss, num_correct)

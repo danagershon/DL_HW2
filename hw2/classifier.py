@@ -59,7 +59,8 @@ class Classifier(nn.Module, ABC):
         """
         # TODO: Calculate class probabilities for the input.
         # ====== YOUR CODE: ======
-        return z.div(z.sum(dim=1, keepdim=True))
+        # return z.div(z.sum(dim=1, keepdim=True))
+        return torch.softmax(z, dim=1)
         # ========================
 
     def classify(self, x: Tensor) -> Tensor:
@@ -96,7 +97,7 @@ class ArgMaxClassifier(Classifier):
         #  Classify each sample to one of C classes based on the highest score.
         #  Output should be a (N,) integer tensor.
         # ====== YOUR CODE: ======
-        return torch.argmax(y_proba, axis=1) #Argmax on class probablities
+        return torch.argmax(y_proba, dim=1) #Argmax on class probablities
         # ========================
 
 

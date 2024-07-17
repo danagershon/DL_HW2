@@ -273,8 +273,13 @@ def part4_optim_hp():
     #    What you returns needs to be a callable, so either an instance of one of the
     #    Loss classes in torch.nn or one of the loss functions from torch.nn.functional.
     # ====== YOUR CODE: ======
-    loss_fn = torch.nn.CrossEntropyLoss() #just picked one that looks ok
-    lr, weight_decay, momentum = 0.06, 0.04, 0.05  # Arguments for SGD optimizer
+    """loss_fn = torch.nn.CrossEntropyLoss() #just picked one that looks ok
+    lr, weight_decay, momentum = 0.06, 0.04, 0.05  # Arguments for SGD optimizer"""
+
+    loss_fn = torch.nn.CrossEntropyLoss()
+    lr = 0.01
+    weight_decay = 0.0001
+    momentum = 0.9
     # ========================
     return dict(lr=lr, weight_decay=weight_decay, momentum=momentum, loss_fn=loss_fn)
 

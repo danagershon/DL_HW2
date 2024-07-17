@@ -218,8 +218,8 @@ class ResidualBlock(nn.Module):
         #  - Don't create layers which you don't use! This will prevent
         #    correct comparison in the test.
         # ====== YOUR CODE: ======
-        channels = channels + [channels[-1]]
-        kernel_sizes = kernel_sizes + [kernel_sizes[-1]]
+        #channels = channels + [channels[-1]]
+        #kernel_sizes = kernel_sizes + [kernel_sizes[-1]]
         self.main_path, self.shortcut_path = [], [torch.nn.Identity()] #TODO LEFT just to make sure we are allowed
         self.current_in_channels = in_channels
         
@@ -228,7 +228,7 @@ class ResidualBlock(nn.Module):
             self.main_path.append(torch.nn.Conv2d(self.current_in_channels, channels[i], kernel_size=kernel_sizes[i], padding=kernel_sizes[i]//2, bias=True)) #valid padding to ensure conservation of spatial resolution
             #Dropout
             if(dropout > 0 and i < len(channels)-1):
-                self.main_path.append(nn.Dropout(dropout))
+                self.main_path.append(nn.Dropout2d(dropout))
             #Batch Normalization
             if(batchnorm and i < len(channels)-1):
                 self.main_path.append(nn.BatchNorm2d(channels[i]))
@@ -351,9 +351,21 @@ class ResNet(CNN):
         for block in range(0, last_full_block, self.pool_every):
             block_end = block + self.pool_every-1
             if(self.bottleneck and self.current_in_channels == self.channels[block_end]):
-                layers.append(ResidualBottleneckBlock(self.current_in_channels, self.channels[block : block_end+1], [3]*self.pool_every, self.batchnorm, self.dropout)) #TODO LEFT  padding=1, stride=1
+                layers.append(ResidualBottleneckBlock(in_out_channels=self.current_in_channels, 
+                                                      inner_channels=self.channels[block : block_end+1], 
+                                                      inner_kernel_sizes=[3]*self.pool_every, 
+                                                      batchnorm=self.batchnorm, 
+                                                      dropout=self.dropout,
+                                                      activation_type=self.activation_type,
+                                                      activation_params=self.activation_params if self.activation_params else ACTIVATION_DEFAULT_KWARGS[self.activation_type])) #TODO LEFT  padding=1, stride=1
             else:
-                layers.append(ResidualBlock(self.current_in_channels, self.channels[block : block_end+1], [3]*self.pool_every, self.batchnorm, self.dropout)) #TODO LEFT  padding=1, stride=1
+                layers.append(ResidualBlock(in_channels=self.current_in_channels, 
+                                            channels=self.channels[block : block_end+1], 
+                                            kernel_sizes=[3]*self.pool_every, 
+                                            batchnorm=self.batchnorm, 
+                                            dropout=self.dropout,
+                                            activation_type=self.activation_type,
+                                            activation_params=self.activation_params if self.activation_params else ACTIVATION_DEFAULT_KWARGS[self.activation_type])) #TODO LEFT  padding=1, stride=1
             
             self.current_in_channels = self.channels[block_end]
             
@@ -363,9 +375,21 @@ class ResNet(CNN):
         #Last M
         if(len(self.channels) % self.pool_every != 0):
             if(self.bottleneck and self.current_in_channels == self.channels[-1]):
-                    layers.append(ResidualBottleneckBlock(self.current_in_channels, self.channels[last_full_block : ], [3]*(len(self.channels) % self.pool_every), self.batchnorm, self.dropout)) #TODO LEFT  padding=1, stride=1
+                    layers.append(ResidualBottleneckBlock(in_out_channels=self.current_in_channels, 
+                                                          inner_channels=self.channels[last_full_block : ], 
+                                                          inner_kernel_sizes=[3]*(len(self.channels) % self.pool_every), 
+                                                          batchnorm=self.batchnorm, 
+                                                          dropout=self.dropout, 
+                                                          activation_type=self.activation_type,
+                                                          activation_params=self.activation_params if self.activation_params else ACTIVATION_DEFAULT_KWARGS[self.activation_type])) #TODO LEFT  padding=1, stride=1
             else:
-                layers.append(ResidualBlock(self.current_in_channels, self.channels[last_full_block : ], [3]*(len(self.channels) % self.pool_every), self.batchnorm, self.dropout)) #TODO LEFT  padding=1, stride=1
+                layers.append(ResidualBlock(in_channels=self.current_in_channels, 
+                                            channels=self.channels[last_full_block : ], 
+                                            kernel_sizes=[3]*(len(self.channels) % self.pool_every), 
+                                            batchnorm=self.batchnorm, 
+                                            dropout=self.dropout, 
+                                            activation_type=self.activation_type,
+                                            activation_params=self.activation_params if self.activation_params else ACTIVATION_DEFAULT_KWARGS[self.activation_type])) #TODO LEFT  padding=1, stride=1
         
         # ========================
         seq = nn.Sequential(*layers)
