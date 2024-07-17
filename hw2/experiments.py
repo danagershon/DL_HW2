@@ -16,6 +16,8 @@ from .mlp import MLP
 from .training import ClassifierTrainer
 from .classifier import ArgMaxClassifier, BinaryClassifier, select_roc_thresh
 
+from .optimizers import MomentumSGD #TODO LEFT is this allowed
+
 DATA_DIR = os.path.expanduser("~/.pytorch-datasets")
 
 MODEL_TYPES = {
@@ -63,7 +65,7 @@ def cnn_experiment(
     early_stopping=3,
     checkpoints=None,
     lr=1e-3,
-    reg=1e-3,
+    reg=1e-3, #TODO LEFT where is reg going to
     # Model params
     filters_per_layer=[64],
     layers_per_block=2,
@@ -73,6 +75,10 @@ def cnn_experiment(
     # You can add extra configuration for your experiments here
     conv_params: dict = {"kernel_size":3},
     pooling_params: dict = {"kernel_size":2},
+    trainer_cls = ClassifierTrainer, #Trainer
+    classifier_cls = ArgMaxClassifier, #Classifier
+    optimizer_cls = torch.optim.SGD, #Optimizer
+    optimizer_params : dict = {"lr":1e-3, "weight_decay":0.1, "momentum":0.9, "loss_fn": torch.nn.CrossEntropyLoss()}, 
     **kw,
 ):
     """
@@ -109,26 +115,34 @@ def cnn_experiment(
     #   for you automatically.
     fit_res = None
     # ====== YOUR CODE: ======
-    '''
-        in_size,
-        out_classes,
-        channels,
-        pool_every,
-        hidden_dims,
-        batchnorm=False,
-        dropout=0.0,
-        bottleneck: bool = False,
-        **kwargs,
-    '''
+    #Construct Model
     channels = []
     for filter_size in filters_per_layer:
         channels += [filter_size] * layers_per_block
-    #print(help(CIFAR10))
+    
     ds_train_data = ds_train.data.transpose(0, 3, 1, 2) #to fit the N,C,W,H format
     in_size = ds_train_data.data.shape[1:]
     out_classes = len(ds_train.classes) #10
-    
+    #print(in_size, out_classes, channels, pool_every, hidden_dims, conv_params,pooling_params)
     model = model_cls(in_size, out_classes, channels, pool_every, hidden_dims, conv_params=conv_params, pooling_params=pooling_params, **kw)
+
+    #Init Trainer
+    classifier_model = classifier_cls(model)
+    
+    loss_fn = optimizer_params.pop('loss_fn')
+    optimizer = optimizer_cls(params=model.parameters(), **optimizer_params)
+    
+    trainer = trainer_cls(classifier_model, loss_fn, optimizer, device)
+
+    #print(model)
+    
+    #DataLoaders
+    dl_train = torch.utils.data.DataLoader(ds_train, bs_train, shuffle=False)
+    dl_test = torch.utils.data.DataLoader(ds_test, bs_test, shuffle=False)
+    
+    #Train
+    fit_res = trainer.fit(dl_train, dl_test, epochs, checkpoints, early_stopping) #print_every = 1
+
     # ========================
 
     save_experiment(run_name, out_dir, cfg, fit_res)

@@ -361,10 +361,11 @@ class ResNet(CNN):
             layers.append(POOLINGS[self.pooling_type](**self.pooling_params))
             
         #Last M
-        if(self.bottleneck and self.current_in_channels == self.channels[-1]):
-                layers.append(ResidualBottleneckBlock(self.current_in_channels, self.channels[last_full_block : ], [3]*(len(self.channels) % self.pool_every), self.batchnorm, self.dropout)) #TODO LEFT  padding=1, stride=1
-        else:
-            layers.append(ResidualBlock(self.current_in_channels, self.channels[last_full_block : ], [3]*(len(self.channels) % self.pool_every), self.batchnorm, self.dropout)) #TODO LEFT  padding=1, stride=1
+        if(len(self.channels) % self.pool_every != 0):
+            if(self.bottleneck and self.current_in_channels == self.channels[-1]):
+                    layers.append(ResidualBottleneckBlock(self.current_in_channels, self.channels[last_full_block : ], [3]*(len(self.channels) % self.pool_every), self.batchnorm, self.dropout)) #TODO LEFT  padding=1, stride=1
+            else:
+                layers.append(ResidualBlock(self.current_in_channels, self.channels[last_full_block : ], [3]*(len(self.channels) % self.pool_every), self.batchnorm, self.dropout)) #TODO LEFT  padding=1, stride=1
         
         # ========================
         seq = nn.Sequential(*layers)
