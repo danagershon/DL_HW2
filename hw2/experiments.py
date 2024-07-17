@@ -148,9 +148,9 @@ def cnn_experiment(
     classifier_cls = ArgMaxClassifier, #Classifier
     optimizer_cls = torch.optim.SGD, #Optimizer
     '''
-    cfg["trainer_cls"] = str(type(trainer_cls))
-    cfg["classifier_cls"] = str(type(classifier_cls))
-    cfg["optimizer_cls"] = str(type(optimizer_cls))
+    cfg["trainer_cls"] = str(trainer_cls.__name__)
+    cfg["classifier_cls"] = str(classifier_cls.__name__)
+    cfg["optimizer_cls"] = str(optimizer_cls.__name__)
     # ========================
 
     save_experiment(run_name, out_dir, cfg, fit_res)
