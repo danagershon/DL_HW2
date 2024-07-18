@@ -65,7 +65,7 @@ def cnn_experiment(
     early_stopping=3,
     checkpoints=None,
     lr=1e-3,
-    reg=1e-3, #TODO LEFT where is reg going to
+    reg=1e-3,
     # Model params
     filters_per_layer=[64],
     layers_per_block=2,
@@ -78,7 +78,8 @@ def cnn_experiment(
     trainer_cls = ClassifierTrainer, #Trainer
     classifier_cls = ArgMaxClassifier, #Classifier
     optimizer_cls = torch.optim.SGD, #Optimizer
-    optimizer_params : dict = {"loss_fn": torch.nn.CrossEntropyLoss(), "lr":1e-3, "weight_decay":0.1, "momentum":0.9}, 
+    loss_fn = torch.nn.CrossEntropyLoss(), #Loss
+    momentum = 0.9, #Momentum
     **kw,
 ):
     """
@@ -130,8 +131,7 @@ def cnn_experiment(
     #Init Trainer
     classifier_model = classifier_cls(model)
     
-    loss_fn = optimizer_params.pop("loss_fn")
-    optimizer = optimizer_cls(params=model.parameters(), **optimizer_params)
+    optimizer = optimizer_cls(params=model.parameters(), lr=lr, weight_decay=reg, momentum=momentum)
     
     trainer = trainer_cls(classifier_model, loss_fn, optimizer, device)
 
@@ -140,7 +140,7 @@ def cnn_experiment(
     dl_test = torch.utils.data.DataLoader(ds_test, bs_test, shuffle=False)
     
     #Train
-    fit_res = trainer.fit(dl_train, dl_test, epochs, checkpoints, early_stopping, max_batches=batches) #print_every = 1
+    fit_res = trainer.fit(dl_train, dl_test, epochs, checkpoints, early_stopping, max_batches=batches) 
     
     #fix cfg:
     ''' To Strings:
@@ -148,6 +148,7 @@ def cnn_experiment(
     classifier_cls = ArgMaxClassifier, #Classifier
     optimizer_cls = torch.optim.SGD, #Optimizer
     '''
+    cfg["loss_fn"] = str(loss_fn.__class__.__name__)
     cfg["trainer_cls"] = str(trainer_cls.__name__)
     cfg["classifier_cls"] = str(classifier_cls.__name__)
     cfg["optimizer_cls"] = str(optimizer_cls.__name__)
@@ -286,6 +287,13 @@ def parse_cli():
         choices=MODEL_TYPES.keys(),
         default="cnn",
         help="Which model instance to create",
+    )
+    ##ADDED FOR USEFULNESS
+    sp_exp.add_argument(
+        "--momentum",
+        "-m",
+        default="0.9",
+        help="Strength of momentum for SGD",
     )
 
     parsed = p.parse_args()
