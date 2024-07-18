@@ -346,50 +346,32 @@ class ResNet(CNN):
         # - Use batchnorm and dropout as requested.
         # ====== YOUR CODE: ======
         self.current_in_channels = in_channels
-        last_full_block = len(self.channels) // self.pool_every * self.pool_every
         
-        for block in range(0, last_full_block, self.pool_every):
+        for block in range(0, len(self.channels), self.pool_every):
             block_end = block + self.pool_every-1
             if(self.bottleneck and self.current_in_channels == self.channels[block_end]):
                 layers.append(ResidualBottleneckBlock(in_out_channels=self.current_in_channels, 
-                                                      inner_channels=self.channels[block : block_end+1], 
-                                                      inner_kernel_sizes=[3]*self.pool_every, 
+                                                      inner_channels=self.channels[block+1 : block_end], 
+                                                      inner_kernel_sizes=[3]*len(self.channels[block+1 : block_end]), 
                                                       batchnorm=self.batchnorm, 
                                                       dropout=self.dropout,
                                                       activation_type=self.activation_type,
-                                                      activation_params=self.activation_params if self.activation_params else ACTIVATION_DEFAULT_KWARGS[self.activation_type])) #TODO LEFT  padding=1, stride=1
+                                                      activation_params={**ACTIVATION_DEFAULT_KWARGS[self.activation_type],**self.activation_params})) #TODO LEFT  i switched it to dict union over default params
             else:
                 layers.append(ResidualBlock(in_channels=self.current_in_channels, 
                                             channels=self.channels[block : block_end+1], 
-                                            kernel_sizes=[3]*self.pool_every, 
+                                            kernel_sizes=[3]*len(self.channels[block : block_end+1]), 
                                             batchnorm=self.batchnorm, 
                                             dropout=self.dropout,
                                             activation_type=self.activation_type,
-                                            activation_params=self.activation_params if self.activation_params else ACTIVATION_DEFAULT_KWARGS[self.activation_type])) #TODO LEFT  padding=1, stride=1
-            
-            self.current_in_channels = self.channels[block_end]
+                                        activation_params={**ACTIVATION_DEFAULT_KWARGS[self.activation_type],**self.activation_params})) #TODO LEFT  padding=1, stride=1
+
+            if(block_end < len(self.channels)):
+                self.current_in_channels = self.channels[block_end]
             
             #MaxPooling
-            layers.append(POOLINGS[self.pooling_type](**self.pooling_params))
-            
-        #Last M
-        if(len(self.channels) % self.pool_every != 0):
-            if(self.bottleneck and self.current_in_channels == self.channels[-1]):
-                    layers.append(ResidualBottleneckBlock(in_out_channels=self.current_in_channels, 
-                                                          inner_channels=self.channels[last_full_block : ], 
-                                                          inner_kernel_sizes=[3]*(len(self.channels) % self.pool_every), 
-                                                          batchnorm=self.batchnorm, 
-                                                          dropout=self.dropout, 
-                                                          activation_type=self.activation_type,
-                                                          activation_params=self.activation_params if self.activation_params else ACTIVATION_DEFAULT_KWARGS[self.activation_type])) #TODO LEFT  padding=1, stride=1
-            else:
-                layers.append(ResidualBlock(in_channels=self.current_in_channels, 
-                                            channels=self.channels[last_full_block : ], 
-                                            kernel_sizes=[3]*(len(self.channels) % self.pool_every), 
-                                            batchnorm=self.batchnorm, 
-                                            dropout=self.dropout, 
-                                            activation_type=self.activation_type,
-                                            activation_params=self.activation_params if self.activation_params else ACTIVATION_DEFAULT_KWARGS[self.activation_type])) #TODO LEFT  padding=1, stride=1
+            if(len(self.channels) % self.pool_every == 0 or block + self.pool_every < len(self.channels)):
+                layers.append(POOLINGS[self.pooling_type](**self.pooling_params))
         
         # ========================
         seq = nn.Sequential(*layers)
