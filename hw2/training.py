@@ -325,7 +325,7 @@ class ClassifierTrainer(Trainer):
             output = self.model(X)
             y_pred = self.model.classify_scores(output)
             # compute number of correct predictions
-            truth_mask = (y_pred.argmax(axis=1) == y).nonzero()
+            truth_mask = (y_pred == y).nonzero()
             num_correct = truth_mask.numel() #NumElements
             
             #Compute Loss

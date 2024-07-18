@@ -142,7 +142,7 @@ def cnn_experiment(
     #Train
     fit_res = trainer.fit(dl_train, dl_test, epochs, checkpoints, early_stopping, max_batches=batches) #print_every = 1
     
-    #fix cfg: #TODO LEFT is this ok?
+    #fix cfg:
     ''' To Strings:
     trainer_cls = ClassifierTrainer, #Trainer
     classifier_cls = ArgMaxClassifier, #Classifier
