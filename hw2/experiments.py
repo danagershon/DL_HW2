@@ -79,7 +79,7 @@ def cnn_experiment(
     classifier_cls = ArgMaxClassifier, #Classifier
     optimizer_cls = torch.optim.SGD, #Optimizer
     loss_fn = torch.nn.CrossEntropyLoss(), #Loss
-    momentum = 0.9, #Momentum
+    momentum: float = 0.9, #Momentum
     **kw,
 ):
     """
@@ -116,6 +116,7 @@ def cnn_experiment(
     #   for you automatically.
     fit_res = None
     # ====== YOUR CODE: ======
+    momentum = float(momentum)
     #Construct Model
     channels = []
     for filter_size in filters_per_layer:
