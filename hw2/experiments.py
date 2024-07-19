@@ -67,8 +67,8 @@ def cnn_experiment(
     lr=1e-3,
     reg=1e-3,
     # Model params
-    filters_per_layer=[64],
-    layers_per_block=2,
+    filters_per_layer=[64], #K
+    layers_per_block=2, #L
     pool_every=2,
     hidden_dims=[1024],
     model_type="cnn",
@@ -80,6 +80,7 @@ def cnn_experiment(
     optimizer_cls = torch.optim.SGD, #Optimizer
     loss_fn = torch.nn.CrossEntropyLoss(), #Loss
     momentum: float = 0.9, #Momentum
+    #dropout: float = 0, #Dropout
     **kw,
 ):
     """
@@ -119,8 +120,8 @@ def cnn_experiment(
     momentum = float(momentum)
     #Construct Model
     channels = []
-    for filter_size in filters_per_layer:
-        channels += [filter_size] * layers_per_block
+    for filter_size in filters_per_layer: #K
+        channels += [filter_size] * layers_per_block #L
     
     x0,_ = ds_train[0]
     in_size = x0.shape
@@ -296,6 +297,11 @@ def parse_cli():
         default="0.9",
         help="Strength of momentum for SGD",
     )
+    '''sp_exp.add_argument(
+        "--dropout",
+        default="0.2",
+        help="Strength of Dropout between every CNN",
+    )'''
 
     parsed = p.parse_args()
 
