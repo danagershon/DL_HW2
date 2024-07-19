@@ -128,12 +128,26 @@ def cnn_experiment(
     out_classes = len(ds_train.classes) #10
     #print(in_size, out_classes, channels, pool_every, hidden_dims, conv_params,pooling_params)
     
-    model = model_cls(in_size, out_classes, channels, pool_every, hidden_dims, conv_params=conv_params, pooling_params=pooling_params, **kw)
+    model = model_cls(
+        in_size=in_size,
+        out_classes=out_classes,
+        channels=channels,
+        pool_every=pool_every,
+        hidden_dims=hidden_dims,
+        conv_params=conv_params,
+        pooling_params=pooling_params,
+        **kw,
+    )
 
     #Init Trainer
     classifier_model = classifier_cls(model)
     
-    optimizer = optimizer_cls(params=model.parameters(), lr=lr, weight_decay=reg, momentum=momentum)
+    optimizer = optimizer_cls(
+        params=model.parameters(), 
+        lr=lr, 
+        weight_decay=reg, 
+        momentum=momentum
+    )
     
     trainer = trainer_cls(classifier_model, loss_fn, optimizer, device)
 
@@ -142,7 +156,15 @@ def cnn_experiment(
     dl_test = torch.utils.data.DataLoader(ds_test, bs_test, shuffle=False)
     
     #Train
-    fit_res = trainer.fit(dl_train, dl_test, epochs, checkpoints, early_stopping, max_batches=batches) 
+    fit_res = trainer.fit(
+        dl_train,
+        dl_test,
+        num_epochs=epochs,
+        early_stopping=early_stopping,
+        checkpoints=checkpoints,
+        max_batches=batches,
+        #print_every=10,
+    ) 
     
     #fix cfg:
     ''' To Strings:
