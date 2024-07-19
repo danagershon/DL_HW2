@@ -73,7 +73,7 @@ def cnn_experiment(
     hidden_dims=[1024],
     model_type="cnn",
     # You can add extra configuration for your experiments here
-    conv_params: dict = {"kernel_size":3},
+    conv_params: dict = {"kernel_size":3, "padding":"same"},
     pooling_params: dict = {"kernel_size":2},
     trainer_cls = ClassifierTrainer, #Trainer
     classifier_cls = ArgMaxClassifier, #Classifier
