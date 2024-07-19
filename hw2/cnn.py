@@ -109,24 +109,6 @@ class CNN(nn.Module):
             y = self.feature_extractor.forward(z)
             
             self.mlp_input_size = y.shape[1] * y.shape[2] * y.shape[3]
-            '''
-            self.last_channels, self.last_h, self.last_w = tuple(self.in_size)
-            
-            layers = list(self.feature_extractor.children())
-            print(layers)
-            for i in range(len(self.channels)):
-                if(type(layers[i]) == type(torch.nn.Conv2d(1, 1, 1)) or type(layers[i]) == type(POOLINGS[self.pooling_type](1))): #TODO LEFT fix types here
-                    #Calculate shape of output
-                    self.last_channels = self.channels[i]
-                    h, w = self.last_h, self.last_w
-        
-                    #TODO: HW2 maybe make this vectorized
-                    self.last_h = (h + 2*layers[i].padding[0] - layers[i].dilation[0] * (layers[i].kernel_size[0] - 1) - 1) // layers[i].stride[0] + 1
-                    self.last_w = (w + 2*layers[i].padding[1] - layers[i].dilation[1] * (layers[i].kernel_size[1] - 1) - 1) // layers[i].stride[1] + 1
-                    #
-            
-            self.mlp_input_size = self.last_h * self.last_w * self.last_channels
-            #print(f"Flattened input size for MLP {self.mlp_input_size}")'''
             # ========================
         finally:
             torch.set_rng_state(rng_state)
@@ -225,7 +207,7 @@ class ResidualBlock(nn.Module):
         
         for i in range(len(channels)):
             #Convolution
-            self.main_path.append(torch.nn.Conv2d(self.current_in_channels, channels[i], kernel_size=kernel_sizes[i], padding=kernel_sizes[i]//2, bias=True)) #valid padding to ensure conservation of spatial resolution
+            self.main_path.append(torch.nn.Conv2d(self.current_in_channels, channels[i], kernel_size=kernel_sizes[i], padding="same", bias=True)) #same padding to ensure conservation of spatial resolution
             #Dropout
             if(dropout > 0 and i < len(channels)-1):
                 self.main_path.append(nn.Dropout2d(dropout))
