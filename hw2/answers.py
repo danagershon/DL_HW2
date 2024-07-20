@@ -11,26 +11,35 @@ math (delimited with $$).
 part1_q1 = r"""
 **Your answer:**
 
+1. A. The Jacobian tensor $\frac{\partial Y}{\partial X}$ is a 4D tensor of the shape: (64, 512, 64, 1024) since the 
+shape of $Y$ is (64, 512) and the shape of $X$ is (64, 1024).
 
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
+1. B. Yes it is sparse. Since each output row depends only on the corresponding input row (sample),
+we get that only the elements: $\frac{\partial y_{i,j}}{\partial{x}_{i,k}}$ are non-zero.
+
+1. C. No, we do not need to materialize the above Jacobian. Using the chain rule:
+$\frac{\partial L}{\partial X} = \frac{\partial L}{\partial Y} * \frac{\partial Y}{\partial X} = 
+\frac{\partial L}{\partial Y} * W^T$. So we only need to multiply by $W^T$.
+
+2. A. The Jacobian tensor $\frac{\partial Y}{\partial W}$ is a 4D tensor of the shape: (64, 512, 512, 1024) since the 
+shape of $Y$ is (64, 512) and the shape of $W$ is (512, 1024).
+
+2. B. Yes it is sparse. Since each output element depends only on the weights that multiply the corresponding input
+elements, we get that only the elements: $\frac{\partial y_{i,j}}{\partial{w}_{j,k}}$ are non-zero.
+
+2. C. No, we do not need to materialize the above Jacobian. Using the chain rule:
+$\frac{\partial L}{\partial W} = \frac{\partial L}{\partial Y} * \frac{\partial Y}{\partial W} = 
+X^T * \frac{\partial L}{\partial Y}$. So we only need to multiply by $X^T$.
 
 """
 
 part1_q2 = r"""
 **Your answer:**
 
-
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
+No. Backpropagation is not required for training neural networks with gradient-based optimization.
+The gradients can be computed for example with forward AD or by hand, and there are alternatives like genetic algorithms 
+that do not rely on gradients. 
+However, backpropagation efficiently calculates gradients, significantly accelerating the training process.
 
 """
 
