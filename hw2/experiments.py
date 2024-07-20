@@ -27,6 +27,13 @@ MODEL_TYPES = {
 }
 
 
+OPTIMIZER_TYPES = {
+    "SGD": torch.optim.SGD,
+    "Adam": torch.optim.Adam,
+    "RMSprop": torch.optim.RMSprop
+}
+
+
 def mlp_experiment(
     depth: int,
     width: int,
@@ -74,13 +81,19 @@ def cnn_experiment(
     model_type="cnn",
     # You can add extra configuration for your experiments here
     conv_params: dict = {"kernel_size":3, "padding":"same"},
+    pooling_type = "max",
     pooling_params: dict = {"kernel_size":2},
+    activation_type = "relu",
+    activation_params ={},
     trainer_cls = ClassifierTrainer, #Trainer
     classifier_cls = ArgMaxClassifier, #Classifier
-    optimizer_cls = torch.optim.SGD, #Optimizer
+    optimizer_cls = "SGD", #Optimizer
     loss_fn = torch.nn.CrossEntropyLoss(), #Loss
     momentum: float = 0.9, #Momentum
-    #dropout: float = 0, #Dropout
+    # for ResNet:
+    batchnorm=False,
+    bottleneck=False,
+    dropout=0.1,
     **kw,
 ):
     """
@@ -117,42 +130,55 @@ def cnn_experiment(
     #   for you automatically.
     fit_res = None
     # ====== YOUR CODE: ======
-    momentum = float(momentum)
+    
     #Construct Model
     channels = []
-    for filter_size in filters_per_layer: #K
-        channels += [filter_size] * layers_per_block #L
+    for filter_size in filters_per_layer: # K
+        channels += [filter_size] * layers_per_block # L
+
+    model_params = {
+        "in_size": ds_train[0][0].shape,
+        "out_classes": len(ds_train.classes), # 10
+        "channels": channels,
+        "pool_every": pool_every,
+        "hidden_dims": hidden_dims,
+        "conv_params": conv_params,
+        "activation_type": activation_type,
+        "activation_params": activation_params,
+        "pooling_type": pooling_type,
+        "pooling_params": pooling_params
+    }
     
-    x0,_ = ds_train[0]
-    in_size = x0.shape
-    out_classes = len(ds_train.classes) #10
-    #print(in_size, out_classes, channels, pool_every, hidden_dims, conv_params,pooling_params)
-    
-    model = model_cls(
-        in_size=in_size,
-        out_classes=out_classes,
-        channels=channels,
-        pool_every=pool_every,
-        hidden_dims=hidden_dims,
-        conv_params=conv_params,
-        pooling_params=pooling_params,
-        **kw,
-    )
+    if model_type == "resnet":
+        # ResNet specific parameters
+        model_params.update({
+            "batchnorm": batchnorm,
+            "dropout": dropout,
+            "bottleneck": bottleneck
+        })
+
+    model = model_cls(**model_params)
 
     #Init Trainer
     classifier_model = classifier_cls(model)
     
-    optimizer = optimizer_cls(
-        params=model.parameters(), 
-        lr=lr, 
-        weight_decay=reg, 
-        momentum=momentum
-    )
+    #Init Optimizer
+    optimizer_params = {
+        "params": model.parameters(),
+        "lr": lr,
+        "weight_decay": reg
+    }
     
-    trainer = trainer_cls(classifier_model, loss_fn, optimizer, device)
+    if optimizer_cls == "SGD":
+        optimizer_params["momentum"] = momentum
+
+    optimizer_cls = OPTIMIZER_TYPES[optimizer_cls]
+    optimizer = optimizer_cls(**optimizer_params)
+    
+    trainer = trainer_cls(classifier_model, loss_fn, optimizer, device=device)
 
     #DataLoaders
-    dl_train = torch.utils.data.DataLoader(ds_train, bs_train, shuffle=False)
+    dl_train = torch.utils.data.DataLoader(ds_train, bs_train, shuffle=True)
     dl_test = torch.utils.data.DataLoader(ds_test, bs_test, shuffle=False)
     
     #Train
@@ -167,11 +193,6 @@ def cnn_experiment(
     ) 
     
     #fix cfg:
-    ''' To Strings:
-    trainer_cls = ClassifierTrainer, #Trainer
-    classifier_cls = ArgMaxClassifier, #Classifier
-    optimizer_cls = torch.optim.SGD, #Optimizer
-    '''
     cfg["loss_fn"] = str(loss_fn.__class__.__name__)
     cfg["trainer_cls"] = str(trainer_cls.__name__)
     cfg["classifier_cls"] = str(classifier_cls.__name__)
@@ -179,6 +200,7 @@ def cnn_experiment(
     # ========================
 
     save_experiment(run_name, out_dir, cfg, fit_res)
+    return fit_res  # TODO LEFT:  don't forget to remove
 
 
 def save_experiment(run_name, out_dir, cfg, fit_res):
