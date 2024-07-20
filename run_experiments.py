@@ -203,6 +203,11 @@ def define_exp_params():
     )
     
     exp1_4_params = exp_params.copy()
+    exp1_4_params.update({
+	"pool_every":12,
+	"hidden_dims":[128],
+	"model":"resnet"
+    })
     exp1_4 = Expirement(
         run_name="exp1_4",
         results_i_dir=results_i_dir,
