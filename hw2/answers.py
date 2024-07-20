@@ -123,14 +123,11 @@ def part2_dropout_hp():
 
 part2_q1 = r"""
 **Your answer:**
+1. Without dropout we see high training accuracy but low test accuracy, because it easier for the model to overfit to the training dataset. With dropout=0.4 we see lower training accuracy, because connections are dropped which makes it harder to train, but the tradeoff is a higher test accuracy (only after epoch 15) which implies the model is successfully generalizing because of the dropout which is as expected.
+We can also see this from the loss: The train loss for no dropout is rapidly dropping, even when the test loss starts going up - this implies overfitting rather than learning and generalizing.
+With dropout we see slower converges in the train loss but the test loss improves over time.
 
-
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
+2. We can see that high dropout (0.8) can sometimes hurt the model even in the test accuracy. We can see this because the train acc barely increases and so is the test accuracy. The learning is so slow because of the dropped connections that the model can't establish strong connections and patterns. Thus the best model overall is a low-dropout which allows the model to learn but also regularize and generalize to the test set.
 
 """
 
@@ -149,15 +146,27 @@ An equation: $e^{i\pi} -1 = 0$
 
 part2_q3 = r"""
 **Your answer:**
+1. Back-propagation is the efficient calculation of the loss gradients with respect to every layer's parameters, by propagating the gradients via the chain rule through all the layers. GD however is the descent-based algorithm that actually improves the parameters using the gradients calculated. So in general back-prop calculates gradients but doesn't change anything, GD uses these gradients and changes the params.
 
+2. SGD is the case of GD where the batch size is 1, so we calculate the gradient with respect to a single data point every step. In general GD calculates the gradient and averages it over a bigger batch. This difference means that the gradient steps the GD takes are smooth and less noisy but take longer in time and memory to calculate the gradient over many points just to move a little. Overall GD takes a lot of little noisy steps, sometimes improving and sometimes not but in Expectation after a long time it should converge similarly to SGD which takes long smooth and direct steps towards the minimum.
 
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
+3. In Deep Learning the models are huge and have many parameters, so SGD is preferred to use instead of GD because the machine won't necessarily have enough memory to contain all the gradients for a big batch. And because each step is faster and takes less memory we can trade-off by just running SGD for a lot more steps and after a while we should approach the minimum.
 
+4. A. No this method isn't equivalent to GD.
+Example:
+x->x^3
+
+Forward pass #1: x=1 -> loss = 1
+Forward pass #2: x=2 -> loss = 8
+
+Gradient of loss with respect to x: 3*$\pow{x,2}$
+
+Gradient proposed by this method: 3*$\pow{1+2,2}$=27 #unsure here, maybe we are talking about the last x used to fpass
+Real sum of gradients: 3*1+3*4=15
+
+So this methods doesn't reproduce the correct gradient sum.
+
+B. 
 """
 
 part2_q4 = r"""
