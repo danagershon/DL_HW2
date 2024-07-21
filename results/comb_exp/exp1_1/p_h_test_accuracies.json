@@ -1,0 +1,1026 @@
+[
+  {
+    "pool_every": 4,
+    "hidden_dims": [
+      64
+    ],
+    "test_accuracies": [
+      {
+        "K": [
+          32
+        ],
+        "L": 2,
+        "test_accuracy": 62.25
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 4,
+        "test_accuracy": 64.25
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 8,
+        "test_accuracy": 9.625
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 16,
+        "test_accuracy": 9.84375
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 2,
+        "test_accuracy": 62.03125
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 4,
+        "test_accuracy": 66.28125
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 8,
+        "test_accuracy": 10.125
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 16,
+        "test_accuracy": 9.96875
+      }
+    ]
+  },
+  {
+    "pool_every": 4,
+    "hidden_dims": [
+      100
+    ],
+    "test_accuracies": [
+      {
+        "K": [
+          32
+        ],
+        "L": 2,
+        "test_accuracy": 63.96875
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 4,
+        "test_accuracy": 62.96875
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 8,
+        "test_accuracy": 10.21875
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 16,
+        "test_accuracy": 9.625
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 2,
+        "test_accuracy": 59.71875
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 4,
+        "test_accuracy": 65.53125
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 8,
+        "test_accuracy": 9.625
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 16,
+        "test_accuracy": 9.75
+      }
+    ]
+  },
+  {
+    "pool_every": 4,
+    "hidden_dims": [
+      256
+    ],
+    "test_accuracies": [
+      {
+        "K": [
+          32
+        ],
+        "L": 2,
+        "test_accuracy": 63.34375
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 4,
+        "test_accuracy": 64.71875
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 8,
+        "test_accuracy": 9.96875
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 16,
+        "test_accuracy": 9.75
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 2,
+        "test_accuracy": 63.0
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 4,
+        "test_accuracy": 66.625
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 8,
+        "test_accuracy": 10.5
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 16,
+        "test_accuracy": 9.84375
+      }
+    ]
+  },
+  {
+    "pool_every": 4,
+    "hidden_dims": [
+      512
+    ],
+    "test_accuracies": [
+      {
+        "K": [
+          32
+        ],
+        "L": 2,
+        "test_accuracy": 56.25
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 4,
+        "test_accuracy": 64.6875
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 8,
+        "test_accuracy": 9.625
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 16,
+        "test_accuracy": 9.65625
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 2,
+        "test_accuracy": 60.6875
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 4,
+        "test_accuracy": 66.9375
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 8,
+        "test_accuracy": 9.84375
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 16,
+        "test_accuracy": 9.84375
+      }
+    ]
+  },
+  {
+    "pool_every": 6,
+    "hidden_dims": [
+      64
+    ],
+    "test_accuracies": [
+      {
+        "K": [
+          32
+        ],
+        "L": 2,
+        "test_accuracy": 63.3125
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 4,
+        "test_accuracy": 62.8125
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 8,
+        "test_accuracy": 9.625
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 16,
+        "test_accuracy": 10.21875
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 2,
+        "test_accuracy": 63.96875
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 4,
+        "test_accuracy": 64.3125
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 8,
+        "test_accuracy": 9.75
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 16,
+        "test_accuracy": 10.125
+      }
+    ]
+  },
+  {
+    "pool_every": 6,
+    "hidden_dims": [
+      100
+    ],
+    "test_accuracies": [
+      {
+        "K": [
+          32
+        ],
+        "L": 2,
+        "test_accuracy": 58.4375
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 4,
+        "test_accuracy": 63.46875
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 8,
+        "test_accuracy": 9.84375
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 16,
+        "test_accuracy": 9.84375
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 2,
+        "test_accuracy": 62.0
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 4,
+        "test_accuracy": 66.09375
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 8,
+        "test_accuracy": 62.25
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 16,
+        "test_accuracy": 10.46875
+      }
+    ]
+  },
+  {
+    "pool_every": 6,
+    "hidden_dims": [
+      256
+    ],
+    "test_accuracies": [
+      {
+        "K": [
+          32
+        ],
+        "L": 2,
+        "test_accuracy": 62.8125
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 4,
+        "test_accuracy": 62.125
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 8,
+        "test_accuracy": 57.09375
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 16,
+        "test_accuracy": 10.21875
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 2,
+        "test_accuracy": 60.0
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 4,
+        "test_accuracy": 62.0625
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 8,
+        "test_accuracy": 10.21875
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 16,
+        "test_accuracy": 9.65625
+      }
+    ]
+  },
+  {
+    "pool_every": 6,
+    "hidden_dims": [
+      512
+    ],
+    "test_accuracies": [
+      {
+        "K": [
+          32
+        ],
+        "L": 2,
+        "test_accuracy": 57.53125
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 4,
+        "test_accuracy": 64.28125
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 8,
+        "test_accuracy": 61.8125
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 16,
+        "test_accuracy": 10.125
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 2,
+        "test_accuracy": 63.875
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 4,
+        "test_accuracy": 66.34375
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 8,
+        "test_accuracy": 62.71875
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 16,
+        "test_accuracy": 9.96875
+      }
+    ]
+  },
+  {
+    "pool_every": 8,
+    "hidden_dims": [
+      64
+    ],
+    "test_accuracies": [
+      {
+        "K": [
+          32
+        ],
+        "L": 2,
+        "test_accuracy": 63.8125
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 4,
+        "test_accuracy": 63.40625
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 8,
+        "test_accuracy": 10.125
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 16,
+        "test_accuracy": 9.65625
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 2,
+        "test_accuracy": 61.96875
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 4,
+        "test_accuracy": 65.75
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 8,
+        "test_accuracy": 9.84375
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 16,
+        "test_accuracy": 9.84375
+      }
+    ]
+  },
+  {
+    "pool_every": 8,
+    "hidden_dims": [
+      100
+    ],
+    "test_accuracies": [
+      {
+        "K": [
+          32
+        ],
+        "L": 2,
+        "test_accuracy": 59.84375
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 4,
+        "test_accuracy": 61.21875
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 8,
+        "test_accuracy": 62.09375
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 16,
+        "test_accuracy": 9.625
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 2,
+        "test_accuracy": 63.71875
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 4,
+        "test_accuracy": 64.3125
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 8,
+        "test_accuracy": 10.21875
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 16,
+        "test_accuracy": 9.75
+      }
+    ]
+  },
+  {
+    "pool_every": 8,
+    "hidden_dims": [
+      256
+    ],
+    "test_accuracies": [
+      {
+        "K": [
+          32
+        ],
+        "L": 2,
+        "test_accuracy": 63.65625
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 4,
+        "test_accuracy": 63.59375
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 8,
+        "test_accuracy": 10.46875
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 16,
+        "test_accuracy": 9.84375
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 2,
+        "test_accuracy": 59.625
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 4,
+        "test_accuracy": 62.0625
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 8,
+        "test_accuracy": 64.21875
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 16,
+        "test_accuracy": 10.125
+      }
+    ]
+  },
+  {
+    "pool_every": 8,
+    "hidden_dims": [
+      512
+    ],
+    "test_accuracies": [
+      {
+        "K": [
+          32
+        ],
+        "L": 2,
+        "test_accuracy": 60.84375
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 4,
+        "test_accuracy": 61.125
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 8,
+        "test_accuracy": 10.21875
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 16,
+        "test_accuracy": 9.84375
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 2,
+        "test_accuracy": 60.875
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 4,
+        "test_accuracy": 63.09375
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 8,
+        "test_accuracy": 10.125
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 16,
+        "test_accuracy": 9.84375
+      }
+    ]
+  },
+  {
+    "pool_every": 10,
+    "hidden_dims": [
+      64
+    ],
+    "test_accuracies": [
+      {
+        "K": [
+          32
+        ],
+        "L": 2,
+        "test_accuracy": 62.6875
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 4,
+        "test_accuracy": 62.59375
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 8,
+        "test_accuracy": 57.625
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 16,
+        "test_accuracy": 9.96875
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 2,
+        "test_accuracy": 61.96875
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 4,
+        "test_accuracy": 65.34375
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 8,
+        "test_accuracy": 61.0625
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 16,
+        "test_accuracy": 9.65625
+      }
+    ]
+  },
+  {
+    "pool_every": 10,
+    "hidden_dims": [
+      100
+    ],
+    "test_accuracies": [
+      {
+        "K": [
+          32
+        ],
+        "L": 2,
+        "test_accuracy": 62.03125
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 4,
+        "test_accuracy": 63.15625
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 8,
+        "test_accuracy": 10.125
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 16,
+        "test_accuracy": 9.96875
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 2,
+        "test_accuracy": 63.03125
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 4,
+        "test_accuracy": 64.5
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 8,
+        "test_accuracy": 10.5
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 16,
+        "test_accuracy": 9.84375
+      }
+    ]
+  },
+  {
+    "pool_every": 10,
+    "hidden_dims": [
+      256
+    ],
+    "test_accuracies": [
+      {
+        "K": [
+          32
+        ],
+        "L": 2,
+        "test_accuracy": 61.78125
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 4,
+        "test_accuracy": 59.78125
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 8,
+        "test_accuracy": 61.0625
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 16,
+        "test_accuracy": 10.5
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 2,
+        "test_accuracy": 59.875
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 4,
+        "test_accuracy": 66.0
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 8,
+        "test_accuracy": 9.75
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 16,
+        "test_accuracy": 9.625
+      }
+    ]
+  },
+  {
+    "pool_every": 10,
+    "hidden_dims": [
+      512
+    ],
+    "test_accuracies": [
+      {
+        "K": [
+          32
+        ],
+        "L": 2,
+        "test_accuracy": 62.75
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 4,
+        "test_accuracy": 64.4375
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 8,
+        "test_accuracy": 10.5
+      },
+      {
+        "K": [
+          32
+        ],
+        "L": 16,
+        "test_accuracy": 9.65625
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 2,
+        "test_accuracy": 60.75
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 4,
+        "test_accuracy": 66.28125
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 8,
+        "test_accuracy": 9.625
+      },
+      {
+        "K": [
+          64
+        ],
+        "L": 16,
+        "test_accuracy": 9.625
+      }
+    ]
+  }
+]

@@ -1,0 +1,7 @@
+{
+  "pool_every": 4,
+  "hidden_dims": [
+    512
+  ],
+  "average_test_accuracy": 66.84375
+}
