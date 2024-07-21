@@ -45,7 +45,7 @@ class Expirement:
                     if isinstance(K, int):
                         K = [K]
                     self.kw.update({
-                        "out_dir": os.path.join(self.out_dir, f"p{pool_every}_h{hidden_dims}"), # like: results/results_1/exp1_1/p4_h100
+                        "out_dir": os.path.join(self.out_dir, f"p{pool_every}_h{hidden_dims[0]}"), # like: results/results_1/exp1_1/p4_h100
                         "pool_every": pool_every,
                         "hidden_dims": hidden_dims
                     })
@@ -123,8 +123,8 @@ def run_chosen_exp(exp1_1, exp1_2, exp1_3, exp1_4):
             else:
                 raise Exception(f"Experiment {exp_name} not found.")
     elif args.comb:
-        pool_every_values = [4, 6, 8]
-        hidden_dims_values = [[100], [256], [512], [500, 500]]
+        pool_every_values = [4, 6, 8, 10]
+        hidden_dims_values = [[64], [100], [256], [512]]
 
         for exp_name in experiment_names:
             exp = experiment_map.get(exp_name.strip())
@@ -171,17 +171,14 @@ def define_exp_params():
     results_i_dir = get_next_results_dir()
         
     exp_params = {  # default params
-        "pool_every": 4,
+        "pool_every": 6,
         "hidden_dims": [100],
-        "optimizer_cls": "Adam"
+        "optimizer_cls": "Adam",
+        "activation_type": "lrelu",
+        "activation_params": {"negative_slope": 0.01}  # default
     }
     
     exp1_1_params = exp_params.copy()
-    exp1_1_params.update({
-        "pool_every": 8,
-        "hidden_dims": [100],
-    })
-
     exp1_1 = Expirement(
         run_name="exp1_1",
         results_i_dir=results_i_dir,
