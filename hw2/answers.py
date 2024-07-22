@@ -292,53 +292,45 @@ An equation: $e^{i\pi} -1 = 0$
 
 part5_q1 = r"""
 **Your answer:**
+1. We can see that the correlation between depth and accuracy is not straight forward. But overall, the model with L=2 (very low depth) was easier to train and reached the highest training accuracy, but at the price of staying at a constant test_acc instead of improving which implies overfitting and the early stopping was necessary to prevent it from overfitting. Later L=4 provided a better tradeoff, giving less train-accuracy but higher overall test-accuracy which means it was better to generalize than L=2. However, further increasing the depth simply hurts the network: L=8 takes a lot longer to approach the accuracy by L=4 and it stops improving the test accuracy pretty early. And in the case of L=16 the model was completely untrainable and didn't learn anything.
+This implies that too-deep models are harder to learn possibly because of the vanishing gradients problem and the detachment of the early layers from the result. Overall it seems medium sized depths are optimal, because less layers are easier to overfit but converge pretty quickly, while too deep models are slow and to train and we can barely reach the optimal weight configuration via GD like this.
 
-
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
+2. Yes, L=16 was untrainable, because of it being too deep making GD highly ineffective (vanishing gradients problem).
+To solve this we can either add skip connections between the early layers to deeper layers which will provide a more concrete gradient to work with, and also help converge faster (Residual Blocks). Another partial solution is to normalize the gradients and try to take bigger steps when calculating for the earlier layers, for the first few epochs, and then slowly lowering the learning rate to fine tune the last layers. This allows the model to first learn the earlier layers to put it in a good environment for a local minimum, and then tune the deeper layers to reach that minimum.
 
 """
 
 part5_q2 = r"""
 **Your answer:**
+In this experiment we see that when L is fixed, we usually see that K=32 under performs in both test and accuracy compared to K=64,128.
+The optimal amount of filters depends on L:
+a. When L=2,4 we see that K=64 dominates both in train and test accuracy. This could be explained by considering that a higher K could lead to overfitting to specific filters and generally trying to find more patterns than necessary can hurt the training of the network and not generalize well in the test.
+b. When L=8 we see that K=128 dominates both train and test accuracy. This could imply that in deeper models, increasing the amount of filters could help find stronger patterns in the deeper layers.
 
+Overall it seems that this experiment shows that on shallow layers, the last layers can't form complex patterns, and increasing the number of filters doesn't improve the quality of the final patterns, just their amount.
+While deeper models actually improve greatly when increasing the amount of filters because they can form complex patterns in the deeper layers, and greatly benefit from a larger amount of high quality patterns.
 
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
+Compared to exp1_1 we see that we either want a medium depth model to learn quickly and generalize, or a deep model with a lot of filters for better quality results.
 
 """
 
 part5_q3 = r"""
 **Your answer:**
 
+We can see that L=2 learns quickly and surpasses everyone in train accuracy, while quickly plateus in terms of test accuracy.
+Compared to that, L=3 learns more slowly and doesn't reach a higher training accuracy but does eventually beat L=2 in terms of test accuracy. Lastly L=4 is the slowest of them all, and doesn't reach a high training accuracy nor a high test accuracy.
 
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
+The L=4 case is explained because the model is so deep, it doesn't utilize the expressiveness of increasing the number of filters, but essentially learns "on two different blocks", plus the fact that the model is deeper and suffers from vanishing gradients, we understand why it takes longer and doesn't reach a high accuracy.
 
+This experiment implies that L=3 (medium depth network) works better than the shallower network, even if they reach the same training accuracy. This is could be explained by considering that a shallow network doesn't have the depth to recognize small and meaningful patterns in the K=64 block, to be later passed to the K=128 block - this means that the patterns formed in the K=64 block are less meaningful and useful for the K=128 than they are in L=3 and thus even though a high training accuracy can be reached, the patterns learned in the end are less useful and less generalizable as they are in L=3.
+
+Overall we conclude that a medium depth network works best when increasing the size of the filters.
 """
 
 part5_q4 = r"""
 **Your answer:**
 
 
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
 
 """
 
