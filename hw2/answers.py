@@ -287,12 +287,29 @@ Layer 3: F=1, K=256, C_in=64 => #params = 16,640
 Overall the Bottleneck has 70,016 params which is way less than the naive CNN.
 
 2. No. operations for a convolutional layer is about C_in * input_size * F^2 * K
-When the input size changes by a factor of about output_size = input_size * K/C_in #Conversion from C_in channels to K channels [Assuming padding is same - won't change the factor by much]
+When the input size changes by a factor of about output_size = input_size * K/C_in #Conversion from C_in channels to K channels [Assuming padding is same - the spatial size in reality won't change the factor by much]
 
+The amount of operations depends on the image input so we'll label it by I.
 For the CNN:
 input_size doesnt change,
 No. Operations: 
+Layer 1: 256 * I * 9 * 256
+Layer 2: 256 * I * 9 * 256
+Sum: 1,179,648 * I
 
+Bottleneck Operations:
+input_size changes because the channels change,
+No. Operations: 
+Layer 1: input_size=I, 256 * I * 1 * 64 //16384
+Layer 2: input_size=I/4, 64 * (I/4) * 9 * 64 //9216
+Layer 3: input_size=I/4, 64 * (I/4) * 1 * 256 //4096
+Sum: 29,696 * I
+
+So for I=32*32 we get:
+CNN: 1,207,959,552 operations
+Bottleneck: 30,408,704 operations
+
+The bottleneck has much less operations.
 
 3. (1) The CNN has better expressiveness spatially because it uses F=3 for all layers (which the bottleneck only uses F=3 for the middle layer) and the receptive field of each neuron effectively triples after each layer, which allows for deeper spatial combinations.
 (2) The bottleneck has more abilities to combine the input across feature maps because it has a bigger number of channels and can create deeper combinations from them, even if every featuremap is spatially simpler than the CNN.
