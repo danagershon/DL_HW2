@@ -225,15 +225,11 @@ def part3_optim_hp():
 
 part3_q1 = r"""
 **Your answer:**
+1. This is when the optimizer has a high error i.e, the optimizer is unable to push the model to the best local minima. This is possible to fix by tuning the hyperparameters for learning (i.e lr, reg, momentum) or to use a completely different Optimizer.
 
+2. This is when the model has learned well on the training set but fails to "Generalize" good results to the test set. This is also known as overfitting and can be fixed by good regularization techniques like Dropout, BatchNormalization etc.
 
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
-
+3. This is when the model simply fails to learn even from the training set (i.e Underfitting). This can be improved by making the model deeper (more complexity) which adds expressivitiy and approximation capabilities to the model. For example increasing the receptive field of a CNN, adding more layers to a MLP, and so on.
 """
 
 part3_q2 = r"""
