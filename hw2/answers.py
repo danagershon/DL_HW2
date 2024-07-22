@@ -152,33 +152,20 @@ part2_q3 = r"""
 
 3. In Deep Learning the models are huge and have many parameters, so SGD is preferred to use instead of GD because the machine won't necessarily have enough memory to contain all the gradients for a big batch. And because each step is faster and takes less memory we can trade-off by just running SGD for a lot more steps and after a while we should approach the minimum.
 
-4. A. No this method isn't equivalent to GD.
-Example:
-x->x^3
+4. A. Yes this method is equivalent. When you forward, the loss tensor will have its grads saved with it. So when we sum the losses together we sum the grads of all the batches. Later the backwards will use this sum of grads to backpropagate which is equivalent to summing the grads of all the batches and thus this method is equivalent to performing GD on all the batches at once.
 
-Forward pass #1: x=1 -> loss = 1
-Forward pass #2: x=2 -> loss = 8
-
-Gradient of loss with respect to x: 3*$\pow{x,2}$
-
-Gradient proposed by this method: 3*$\pow{1+2,2}$=27 #unsure here, maybe we are talking about the last x used to fpass
-Real sum of gradients: 3*1+3*4=15
-
-So this methods doesn't reproduce the correct gradient sum.
-
-B. 
+B. As mentioned before, you have still have to save the grads of each loss tensor to sum them later. This means that even if the batches fit in the memory, the amounts of grads saved will be like in GD and we will reach an out of memory error.
 """
 
 part2_q4 = r"""
 **Your answer:**
+1.
+A. Instead of saving the grad at each step ($O(n)$), we can save just the last_grad & last_val to calculate the next ones in the chain (because the tree is serial). This way we reach O(1) memory complexity at the same time complexity.
+B. First we'll run a forward pass. In this pass we won't remember every value calculated but we'll do it slightly differently: Every k nodes in the tree we'll save a "checkpoint" - the value of the function in that node. This way when we calculate the gradients of the last k nodes we first calculate the value of them by using the last checkpoint (and forward passing it) - this will take O(k) time&memory. Now we do normal backprop, and when we reach the next k-block we continue the same way but we forget the buffer of the k values saved from the last block. I.e we remember O(k) values and grads at each time, and we still only calculate the values at O(n * n/k)=O(n) time. This reduces the memory to O(n/k + k) [n/k checkpoints, k values in buffer] while maintaining O(n) time. By choosing k=O($\sqrt{n}$) we can reach O($\sqrt{n}$) memory.
 
+C. Yes, by doing the same methods for all paths from the input to the output (which is way less than the size of the tree) we can generalize it to any tree structure.
 
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
+D. Very deep neural nets take a lot of memory and to train with GD we'll need even more memory to save all the gradients for all the params. This means that sometimes it is impossible to train a model in the given memory requirement without using this methods to reduce the memory complexity of back propagation. 
 
 """
 
@@ -235,40 +222,26 @@ part3_q1 = r"""
 part3_q2 = r"""
 **Your answer:**
 
+For example when training a binary model to classify if an image is the digit 0 or not, but in training we over-expose it to the digit 0. The model will learn that it's worth saying "True" most of the time to be correct, and will be punished less for being mistaken by guessing "True". So in deployment when it will see different digits most of the time it will guess "True" which leads to a high False Positive Rate.
 
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
-
+The opposite case of high False Negative Rate can happen when we under expose it to the digit 0, i.e give it a lot of other digits and it will train to say "False" most of the time, and will miss a lot of zeros ("False Negative").
 """
 
 part3_q3 = r"""
 **Your answer:**
+1. In this scenario we don't mind having a lot of false negatives (i.e missing people with the disease) because in that case they'll still survive and even show symptoms to allow for treatment later. So in this case we want a high True positive rate at a cost of a high False negative rate -> The optimal point of us is shifted to the top right of the ROC diagram.
 
-
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
+2. In this scenario, even missed patient will result in death, and it is better to send them to the expensive test to even have a chance to save them. Thus we can't allow missing patients, and we need a low False Negative rate. This will come at the cost of a low True Negative rate -> The optimal point is shifted to the bottom left of the ROC diagram.
 
 """
 
 
 part3_q4 = r"""
 **Your answer:**
+There are many disadvantages to using MLP for this task:
+1. Sentence length: The MLP has a fixed size, which limits the size of the sentence the model allows. And also, in reality most of the sentences will be short and the MLP won't know how to train the weights that correlate to the last words that rarely appear in this fixed sentence size. This way when it gets a longer than average sentence, it will most probably not perform well.
 
-
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
+2. Word Shifting: The MLP will have to relearn the sentiment for the sentences I like apples and Hi, I like apples, because every word is now in a different input node and the weights are not shared. This both means that the model has to learn multiple times for similar sentences, and that this will greatly hurt the model's performance because of similar but contradictory sentences like I like apples, I don't like apples.
 
 """
 # ==============
