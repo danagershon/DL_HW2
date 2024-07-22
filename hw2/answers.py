@@ -277,13 +277,25 @@ def part4_optim_hp():
 part4_q1 = r"""
 **Your answer:**
 
+1. No. Params for a convolutional layer is K * (C_in*F^2 + 1)
+For the CNN we have two 3x3 convs on K=C_in=256 which give 2*256*(256*9+1)=1,180,160 params
 
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
+For the Bottleneck block we have:
+Layer 1: F=1, K=64, C_in=256 => #params = 16,448
+Layer 2: F=3, K=64, C_in=64 => #params = 36,928
+Layer 3: F=1, K=256, C_in=64 => #params = 16,640
+Overall the Bottleneck has 70,016 params which is way less than the naive CNN.
+
+2. No. operations for a convolutional layer is about C_in * input_size * F^2 * K
+When the input size changes by a factor of about output_size = input_size * K/C_in #Conversion from C_in channels to K channels [Assuming padding is same - won't change the factor by much]
+
+For the CNN:
+input_size doesnt change,
+No. Operations: 
+
+
+3. (1) The CNN has better expressiveness spatially because it uses F=3 for all layers (which the bottleneck only uses F=3 for the middle layer) and the receptive field of each neuron effectively triples after each layer, which allows for deeper spatial combinations.
+(2) The bottleneck has more abilities to combine the input across feature maps because it has a bigger number of channels and can create deeper combinations from them, even if every featuremap is spatially simpler than the CNN.
 
 """
 
