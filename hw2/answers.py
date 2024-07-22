@@ -133,14 +133,17 @@ With dropout we see slower converges in the train loss but the test loss improve
 
 part2_q2 = r"""
 **Your answer:**
+Yes.
+Cross Entropy estimates the how much the model is confident in its answer (i.e the loss is lowest when the scores tend to 1 for the correct label, rather than being spread out). However, accuracy tests are accurate the model is after converting the score to class via softmax. 
+Consider the following example for a binary classifier tested on two data samples:
+Before training it gives:
+1. For the first sample a high score to the correct label (i.e label=0, and scores=[0.9, 0.1])
+2. For the second sample a medium score and misclassifies the label (i.e label=0, and scores=[0.45,0.55])
 
+Then after training the model could improve to reach
+Test #1 scores: [0.6,0.4], Test #2 scores: [0.55, 0.45]
 
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
+And now accuracy has increased (50% to 100%) and the loss has increased (the scores are closer to 0.5, instead of tending to 1).
 
 """
 
@@ -330,8 +333,17 @@ Overall we conclude that a medium depth network works best when increasing the s
 part5_q4 = r"""
 **Your answer:**
 
+In the first part we clearly see that the best performing model is L=8. Compared to L=8, K=32 from exp1_1 we can see that the ResNet model performs better on the test set while performing worse on the training set. This implies that the skip connections in the ResNet allow the model to learn better even in this depth and thus generalizing better on test data and not overfitting on training data. Furthermore, we can see that the ResNet model is able to train L=16, K=32 while the normal CNN wasn't able to, which also implies that the ResNet helps with the vanishing gradients problem.
 
+Overall compared to exp1_1, we see the ResNet improves on the normal CNN even for deeper layers.
 
+To explain why L=8 performs better than the deeper ResNet models (L=16,32) we consider exp 1_3 where we saw that 3-4 layers are optimal for these models on this dataset. This implies that L=8 and above are simply too deep and would perform worse than L~3-4 which is why out of all the ResNet models, L=8 is the best one. The comparison isn't optimal because here we don't change K but it helps justify the result. 
+
+The same explanation could be used for the second part where we see L=2 perform better with K of length 3, because other models are too deep (>6 layers).
+
+Finally comparing between part 1 and part 2 of exp1_4 we see that even the deeper and more complex ResNet models (L=2, K=64,128,256 is the best one in this part) still underperform compared to the simpler ones (L=8, K=32) which means the skip connections wasn't able to improve enough to justify having deeper and more complex models.
+
+Overall the experiments conclude that for this dataset, the best accuracy is by using ResNet models with medium depth and medium complexity because they provide the best tradeoff between simplicity and generalization (For shallow networks) and deepness and overfitting (or even untrainability when considering vanishing gradients for deep networks).
 """
 
 
