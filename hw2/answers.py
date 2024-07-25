@@ -270,11 +270,11 @@ Layer 3: $F=1, K=256, C_{in}=64 \Rightarrow No.params = 256\cdot (64\cdot 1^2+1)
 Overall the Bottleneck has $70,016$ params which is way less than the naive CNN.
 
 2. Number of operations for a convolutional layer is about $C_{in} \cdot I \cdot F^2 \cdot K$  
-Where $I$ - input_size for a layer, $O$ - output_size for the layer.
-After forward pass, the size changes by a factor of about $O = I \cdot K/C_{in}$  
+Where $I=W\cdot H$ - the spatial input_size for a layer, $O=W_{out}\cdot H_{out}$ - output_size for the layer.  
+After forward pass, the size changes by a factor of about $O = I \cdot K/C_{in}$, 
 Which is the conversion from $C_{in}$ channels to $K$ channels [Assuming padding is same - the spatial size in reality won't change the factor by much]
 
-The amount of operations depends on the image input so we'll label it by $I$.
+The amount of operations depends on the image input so we'll label it by $I=W\cdot H$.
 
 For the CNN:
 input_size doesnt change. Number of operations:  
