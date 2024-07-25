@@ -110,7 +110,7 @@ part2_q1 = r"""
 We can also see this from the loss: The train loss for no dropout is rapidly dropping, even when the test loss starts going up - this implies overfitting rather than learning and generalizing.
 With dropout we see slower converges in the train loss but the test loss improves over time.
 
-2. We can see that high dropout (0.8) can sometimes hurt the model even in the test accuracy. We can see this because the train acc barely increases and so is the test accuracy. The learning is so slow because of the dropped connections that the model can't establish strong connections and patterns. Thus the best model overall is a low-dropout which allows the model to learn but also regularize and generalize to the test set.
+2. We can see that high dropout (0.8) can be worse than low dropout (0.4) even in the test accuracy. We can explain this by considering that the learning is now slower because of the dropped connections, and the model can't establish strong connections and patterns that it could have in low dropout. We should note however that it does perform better than no dropout at all. Thus the best model overall is a low-dropout which allows the model to learn but also regularize and generalize to the test set without overfitting.
 
 """
 
