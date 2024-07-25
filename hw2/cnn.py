@@ -87,7 +87,6 @@ class CNN(nn.Module):
             layers.append(ACTIVATIONS[self.activation_type](**self.activation_params))
             self.current_in_channels = self.channels[i]
 
-            #MaxPooling
             if((i+1) % self.pool_every == 0):
                 layers.append(POOLINGS[self.pooling_type](**self.pooling_params))
 
@@ -105,10 +104,9 @@ class CNN(nn.Module):
         try:
             # ====== YOUR CODE: ======
             #Easy solution:
-            z = torch.zeros((1,*self.in_size))
-            y = self.feature_extractor.forward(z)
-            
-            self.mlp_input_size = y.shape[1] * y.shape[2] * y.shape[3]
+            z = torch.zeros((1, *self.in_size))
+            y = self.feature_extractor(z)
+            return y.numel()
             # ========================
         finally:
             torch.set_rng_state(rng_state)
@@ -122,11 +120,12 @@ class CNN(nn.Module):
         #  - The last Linear layer should have an output dim of out_classes.
         mlp: MLP = None
         # ====== YOUR CODE: ======
-        self._n_features()
+        mlp_input_size = self._n_features()
         layer_dims = self.hidden_dims + [self.out_classes]
-        activations_dims = [ACTIVATIONS[self.activation_type](**self.activation_params, **ACTIVATION_DEFAULT_KWARGS[self.activation_type])] * len(self.hidden_dims) + [ACTIVATIONS["none"](**self.activation_params, **ACTIVATION_DEFAULT_KWARGS["none"])]
-        
-        mlp = MLP(self.mlp_input_size, layer_dims, activations_dims)
+        activation_params = {**self.activation_params, **ACTIVATION_DEFAULT_KWARGS[self.activation_type]}
+        activation_cls = ACTIVATIONS[self.activation_type](**activation_params)
+        activations_dims = [activation_cls] * len(self.hidden_dims) + [ACTIVATIONS["none"]()]
+        mlp = MLP(mlp_input_size, layer_dims, activations_dims)
         # ========================
         return mlp
 
@@ -136,11 +135,9 @@ class CNN(nn.Module):
         #  return class scores.
         out: Tensor = None
         # ====== YOUR CODE: ======
-        x_features = self.feature_extractor.forward(x)
-        #print(f"MLP forward {x_features.shape}")
-        x_features = x_features.view(x_features.size(0), -1) #TODO LEFT- flatten
-        #print(f"MLP forward flattened {x_features.shape}")
-        out = self.mlp.forward(x_features)
+        x_features = self.feature_extractor(x)
+        x_features = x_features.view(x_features.size(0), -1) # flatten
+        out = self.mlp(x_features)
         # ========================
         return out
 
@@ -200,14 +197,13 @@ class ResidualBlock(nn.Module):
         #  - Don't create layers which you don't use! This will prevent
         #    correct comparison in the test.
         # ====== YOUR CODE: ======
-        #channels = channels + [channels[-1]]
-        #kernel_sizes = kernel_sizes + [kernel_sizes[-1]]
-        self.main_path, self.shortcut_path = [], [torch.nn.Identity()] #TODO LEFT just to make sure we are allowed
+
+        self.main_path, self.shortcut_path = [], [nn.Identity()]
         self.current_in_channels = in_channels
         
         for i in range(len(channels)):
             #Convolution
-            self.main_path.append(torch.nn.Conv2d(self.current_in_channels, channels[i], kernel_size=kernel_sizes[i], padding="same", bias=True)) #same padding to ensure conservation of spatial resolution
+            self.main_path.append(nn.Conv2d(self.current_in_channels, channels[i], kernel_size=kernel_sizes[i], padding="same", bias=True)) #same padding to ensure conservation of spatial resolution
             #Dropout
             if(dropout > 0 and i < len(channels)-1):
                 self.main_path.append(nn.Dropout2d(dropout))
@@ -216,15 +212,16 @@ class ResidualBlock(nn.Module):
                 self.main_path.append(nn.BatchNorm2d(channels[i]))
             #ReLU, except for last
             if(i < len(channels)-1):
-                self.main_path.append(ACTIVATIONS[activation_type](**activation_params, **ACTIVATION_DEFAULT_KWARGS[activation_type]))
+                activation_params_union = {**activation_params, **ACTIVATION_DEFAULT_KWARGS[activation_type]}
+                self.main_path.append(ACTIVATIONS[activation_type](**activation_params_union))
             #Remember Last Channel
             self.current_in_channels = channels[i]
 
         #Last Channel:
         if(self.current_in_channels != in_channels):
-            self.shortcut_path.append(torch.nn.Conv2d(in_channels, self.current_in_channels, kernel_size=1, bias=False)) #Projection
+            self.shortcut_path.append(nn.Conv2d(in_channels, self.current_in_channels, kernel_size=1, bias=False)) #Projection
 
-        self.main_path = nn.Sequential(*self.main_path, **kwargs) #TODO LEFT just to make sure we are allowed
+        self.main_path = nn.Sequential(*self.main_path, **kwargs)
         self.shortcut_path = nn.Sequential(*self.shortcut_path, **kwargs)
         # ========================
 
@@ -232,8 +229,8 @@ class ResidualBlock(nn.Module):
         # TODO: Implement the forward pass. Save the main and residual path to `out`.
         out: Tensor = None
         # ====== YOUR CODE: ======
-        y = self.main_path.forward(x)
-        z = self.shortcut_path.forward(x)
+        y = self.main_path(x)
+        z = self.shortcut_path(x)
         out = y + z
         # ========================
         out = torch.relu(out)
@@ -338,7 +335,7 @@ class ResNet(CNN):
                                                       batchnorm=self.batchnorm, 
                                                       dropout=self.dropout,
                                                       activation_type=self.activation_type,
-                                                      activation_params={**ACTIVATION_DEFAULT_KWARGS[self.activation_type],**self.activation_params})) #TODO LEFT  i switched it to dict union over default params
+                                                      activation_params={**ACTIVATION_DEFAULT_KWARGS[self.activation_type], **self.activation_params}))
             else:
                 layers.append(ResidualBlock(in_channels=self.current_in_channels, 
                                             channels=self.channels[block : block_end+1], 
@@ -346,7 +343,7 @@ class ResNet(CNN):
                                             batchnorm=self.batchnorm, 
                                             dropout=self.dropout,
                                             activation_type=self.activation_type,
-                                        activation_params={**ACTIVATION_DEFAULT_KWARGS[self.activation_type],**self.activation_params})) #TODO LEFT  padding=1, stride=1
+                                            activation_params={**ACTIVATION_DEFAULT_KWARGS[self.activation_type], **self.activation_params}))
 
             if(block_end < len(self.channels)):
                 self.current_in_channels = self.channels[block_end]
