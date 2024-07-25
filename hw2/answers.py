@@ -72,9 +72,9 @@ def part2_optim_hp():
 
     wstd, lr_vanilla, lr_momentum, lr_rmsprop, reg = (
         0.1,
-        0.01,  # vanilla SGD  # TODO LEFT: tweak values to get better test accuracy than 35.1
-        0.01,  # SGD with momentum  # TODO LEFT: tweak values to get far better test accuracy than vanilla
-        0.0001,  # RMSProp  # TODO LEFT: tweak more, 0.0001 is better than 0.001, against 0.0005 not sure
+        0.03,  # vanilla SGD
+        0.003,  # SGD with momentum
+        0.0002,  # RMSProp
         0.0001,
     )
     # ========================
@@ -96,26 +96,9 @@ def part2_dropout_hp():
     # dropout.
     # ====== YOUR CODE: ======
 
-    # TODO LEFT: find best wstd and lr
-    # bad combinations: 0.1,0.01  0.2,0.005  0.05,0.01  0.1,0.006  0.11,0.006
-    # good combinations: 0.1,0.005  0.1,0.004  0.09,0.005  0.11,0.005  0.09,0.004 (best)
-    
-    # to try: 
-    combinations = [
-        (0.1, 0.005),
-        (0.1, 0.004),
-        (0.1, 0.006),
-        (0.09, 0.005),
-        (0.11, 0.005),
-        (0.09, 0.004),
-        (0.11, 0.006)
-    ] 
-
-    # wstd, lr = combinations[6]  # change index to match the combination to test
-
     wstd, lr = (
-        0.09,  # Weight standard deviation
-        0.004,  # Learning rate
+        0.15,  # Weight standard deviation
+        0.001,  # Learning rate
     )
     # ========================
     return dict(wstd=wstd, lr=lr)

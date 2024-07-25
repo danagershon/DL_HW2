@@ -354,7 +354,7 @@ class LayerTrainer(Trainer):
         #    not a tensor) as num_correct.
         # ====== YOUR CODE: ======
 
-        if self.device:  # TODO LEFT: check if this is needed
+        if self.device:
             X, y = X.to(self.device), y.to(self.device)
 
         self.optimizer.zero_grad()
@@ -386,10 +386,10 @@ class LayerTrainer(Trainer):
         # TODO: Evaluate the Layer model on one batch of data.
         # ====== YOUR CODE: ======
 
-        if self.device:  # TODO LEFT: check if this is needed
+        if self.device:
             X, y = X.to(self.device), y.to(self.device)
 
-        X = X.view(X.size(0), -1)  # TODO: HW2 - flatten X - needed since MLP expected 2-dim tensor
+        X = X.view(X.size(0), -1)  # flatten X - needed since MLP expected 2-dim tensor
 
         # forward pass - compute model prediction on the batch
         y_pred = self.model(X)  

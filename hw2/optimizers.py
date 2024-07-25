@@ -92,7 +92,7 @@ class MomentumSGD(Optimizer):
 
         # TODO: Add your own initializations as needed.
         # ====== YOUR CODE: ======
-        self.velocity = [torch.zeros_like(p) for p, dp in self.params] #Acts as v_i[t]
+        self.velocity = [torch.zeros_like(p) for p, _ in self.params] #Acts as v_i[t]
         # ========================
 
     def step(self):
@@ -129,7 +129,7 @@ class RMSProp(Optimizer):
 
         # TODO: Add your own initializations as needed.
         # ====== YOUR CODE: ======
-        self.r = [torch.zeros_like(p) for p, dp in self.params]
+        self.r = [torch.zeros_like(p) for p, _ in self.params]
         # ========================
 
     def step(self):
