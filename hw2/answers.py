@@ -260,37 +260,41 @@ def part4_optim_hp():
 part4_q1 = r"""
 **Your answer:**
 
-1. No. Params for a convolutional layer is K * (C_in*F^2 + 1)
-For the CNN we have two 3x3 convs on K=C_in=256 which give 2*256*(256*9+1)=1,180,160 params
 
-For the Bottleneck block we have:
-Layer 1: F=1, K=64, C_in=256 => #params = 16,448
-Layer 2: F=3, K=64, C_in=64 => #params = 36,928
-Layer 3: F=1, K=256, C_in=64 => #params = 16,640
+1. No. Params for a convolutional layer is $K\cdot (C_{in}\cdot F+1)$  
+For the CNN we have two 3x3 convs on $K=C_{in}=256$ which give $2\cdot 256\cdot (256\cdot 9+1)=1,180,160$ params.  
+
+For the Bottleneck block we have:  
+Layer 1: $F=1, K=64, C_{in}=256 \Rightarrow No.params = 16,448$  
+Layer 2: $F=3, K=64, C_{in}=64 \Rightarrow No.params = 36,928$  
+Layer 3: $F=1, K=256, C_{in}=64 \Rightarrow No.params = 16,640$  
 Overall the Bottleneck has 70,016 params which is way less than the naive CNN.
 
-2. No. operations for a convolutional layer is about C_in * input_size * F^2 * K
-When the input size changes by a factor of about output_size = input_size * K/C_in #Conversion from C_in channels to K channels [Assuming padding is same - the spatial size in reality won't change the factor by much]
+2. 
+No. operations for a convolutional layer is about $C_{in} \cdot I \cdot F^2 \cdot K$  
+Where I - input_size for a layer, O - output_size for the layer.
+After forward pass, the size changes by a factor of about $O = I \cdot K/C_{in}$  
+Which is the conversion from $C_{in}$ channels to $K$ channels [Assuming padding is same - the spatial size in reality won't change the factor by much]
 
 The amount of operations depends on the image input so we'll label it by I.
 For the CNN:
 input_size doesnt change,
-No. Operations: 
-Layer 1: 256 * I * 9 * 256
-Layer 2: 256 * I * 9 * 256
-Sum: 1,179,648 * I
+No. Operations:  
+Layer 1: $256 \cdot I \cdot 9 \cdot 256$  
+Layer 2: $256 \cdot I \cdot 9 \cdot 256$  
+Sum: $1,179,648 \cdot I$  
 
 Bottleneck Operations:
 input_size changes because the channels change,
 No. Operations: 
-Layer 1: input_size=I, 256 * I * 1 * 64 //16384
-Layer 2: input_size=I/4, 64 * (I/4) * 9 * 64 //9216
-Layer 3: input_size=I/4, 64 * (I/4) * 1 * 256 //4096
-Sum: 29,696 * I
+Layer 1: input_size=$I$, No. Operations: $256 \cdot I \cdot 1 \cdot 64$  
+Layer 2: input_size=$I/4$, No. Operations: $64 \cdot (I/4) \cdot 9 \cdot 64$  
+Layer 3: input_size=$I/4$, No. Operations: $64 \cdot (I/4) \cdot 1 \cdot 256$  
+Sum: $29,696 \cdot I$  
 
-So for I=32*32 we get:
-CNN: 1,207,959,552 operations
-Bottleneck: 30,408,704 operations
+So for $I=32^2$ we get:  
+CNN: $1,207,959,552$ operations  
+Bottleneck: $30,408,704$ operations  
 
 The bottleneck has much less operations.
 
