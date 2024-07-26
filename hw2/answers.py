@@ -259,35 +259,34 @@ part4_q1 = r"""
 **Your answer:**
 
 
-1. No. Params for a convolutional layer is $K\cdot (C_{in}\cdot F+1)$  
-For the CNN we have two 3x3 convs on $K=C_{in}=256$ which give $2\cdot 256\cdot (256\cdot 9+1)=1,180,160$ params.  
+1. Number of params for a convolutional layer is $K\cdot (C_{in}\cdot F^2+1)$  
 
-For the Bottleneck block we have:  
-Layer 1: $F=1, K=64, C_{in}=256 \Rightarrow No.params = 16,448$  
-Layer 2: $F=3, K=64, C_{in}=64 \Rightarrow No.params = 36,928$  
-Layer 3: $F=1, K=256, C_{in}=64 \Rightarrow No.params = 16,640$  
-Overall the Bottleneck has 70,016 params which is way less than the naive CNN.
+- For the CNN we have two 3x3 convs on $K=256, C_{in}=256$ which gives $2\cdot 256\cdot (256\cdot 3^2+1)=1,180,160$ params.  
 
-2. 
-No. operations for a convolutional layer is about $C_{in} \cdot I \cdot F^2 \cdot K$  
-Where I - input_size for a layer, O - output_size for the layer.
+- For the Bottleneck block we have:  
+Layer 1: $F=1, K=64, C_{in}=256 \Rightarrow No.params = 64\cdot (256\cdot 1^2+1) = 16,448$  
+Layer 2: $F=3, K=64, C_{in}=64 \Rightarrow No.params = 64\cdot (64\cdot 3^2+1) = 36,928$  
+Layer 3: $F=1, K=256, C_{in}=64 \Rightarrow No.params = 256\cdot (64\cdot 1^2+1) = 16,640$  
+Overall the Bottleneck has $70,016$ params which is way less than the naive CNN.
+
+2. Number of operations for a convolutional layer is about $C_{in} \cdot I \cdot F^2 \cdot K$  
+Where $I$ - input_size for a layer, $O$ - output_size for the layer.
 After forward pass, the size changes by a factor of about $O = I \cdot K/C_{in}$  
 Which is the conversion from $C_{in}$ channels to $K$ channels [Assuming padding is same - the spatial size in reality won't change the factor by much]
 
-The amount of operations depends on the image input so we'll label it by I.
+The amount of operations depends on the image input so we'll label it by $I$.
+
 For the CNN:
-input_size doesnt change,
-No. Operations:  
-Layer 1: $256 \cdot I \cdot 9 \cdot 256$  
-Layer 2: $256 \cdot I \cdot 9 \cdot 256$  
+input_size doesnt change. Number of operations:  
+- Layer 1: $256 \cdot I \cdot 9 \cdot 256$  
+- Layer 2: $256 \cdot I \cdot 9 \cdot 256$  
 Sum: $1,179,648 \cdot I$  
 
 Bottleneck Operations:
-input_size changes because the channels change,
-No. Operations: 
-Layer 1: input_size=$I$, No. Operations: $256 \cdot I \cdot 1 \cdot 64$  
-Layer 2: input_size=$I/4$, No. Operations: $64 \cdot (I/4) \cdot 9 \cdot 64$  
-Layer 3: input_size=$I/4$, No. Operations: $64 \cdot (I/4) \cdot 1 \cdot 256$  
+input_size changes because the channels change. Number of operations: 
+- Layer 1: input_size=$I$, number of operations: $256 \cdot I \cdot 1 \cdot 64$  
+- Layer 2: input_size=$I/4$, number of operations: $64 \cdot (I/4) \cdot 9 \cdot 64$  
+- Layer 3: input_size=$I/4$, number of operations: $64 \cdot (I/4) \cdot 1 \cdot 256$  
 Sum: $29,696 \cdot I$  
 
 So for $I=32^2$ we get:  
@@ -296,8 +295,9 @@ Bottleneck: $30,408,704$ operations
 
 The bottleneck has much less operations.
 
-3. (1) The CNN has better expressiveness spatially because it uses F=3 for all layers (which the bottleneck only uses F=3 for the middle layer) and the receptive field of each neuron effectively triples after each layer, which allows for deeper spatial combinations.
-(2) The bottleneck has more abilities to combine the input across feature maps because it has a bigger number of channels and can create deeper combinations from them, even if every featuremap is spatially simpler than the CNN.
+3. 
+- (1) The CNN has better expressiveness spatially because it uses F=3 for all layers (which the bottleneck only uses F=3 for the middle layer) and the receptive field of each neuron effectively triples after each layer, which allows for deeper spatial combinations.
+- (2) The bottleneck has more abilities to combine the input across feature maps because it has a bigger number of channels and can create deeper combinations from them, even if every featuremap is spatially simpler than the CNN.
 
 """
 
