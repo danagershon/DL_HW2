@@ -374,24 +374,25 @@ part6_q1 = r"""
  - for 'DolphinsInTheSky' picture, it detected 3 objects' places correctly but failed at classifying them - it classified 2 
 of the dolphins as people (one with a semi-high confidence of 0.9 and the other with a low confidence of 0.5) and the other dolphin as 
 a surfboard (with a low confidence of 0.37).
-- for 'cat-shiba-inu-2' picture, it detected 3 objects places correctly (the dogs) but it classified the dogs as cats
-(with low confidences of 0.66, 0.39, 0.51). It missed detecting the cat as an object.
+- for 'cat-shiba-inu-2' picture, it detected 3 objects places correctly (the dogs) but it classified 2 of the dogs as cats
+and one as a dog (with low confidences of 0.66, 0.39, 0.51). The detected shape of the dog that was classfied
+correctly was too big. Also, it missed detecting the cat as an object.
 
 2. First, the model failures are reflected by the low confidence scores - the model was uncertain in classifying the objects.
 Specific reasons for the model failures can be:
 - the model has not trained on enough dolphins/dogs/cats examples.
-to resolve this issue, we need to train the model on more examples of dolphins/dogs/cats with 
+To resolve this issue, we need to train the model on more examples of dolphins/dogs/cats with 
 a good balance between examples of different classes. 
-- the objects' features were not strong. For example, the dolphins were filmed with a backlight and became black.
-to resolve this issue, we should apply adjustments to the picture such as color correcting and scaling. 
+- the objects' features in the picture were not strong. For example, the dolphins were filmed with a backlight and became black.
+To resolve this issue, we should apply adjustments to the picture such as color correcting and scaling. 
 - the objects in the picture have a similar appearance. For example, shiba inu dogs look similar to cats.
 to resolve this issue, we need to train the model on diverse examples of dolphins/dogs/cats - different
 appearances, lighting, background etc.
 
 3. To conduct a PGD attack, I would take a sample image and iteratively modify it to maximize the model's prediction error.
-Similarly to the attack from tutorial 4, this is done by computing the gradient of a negative loss with respect to the sample,
+Similarly to the attack from tutorial 4, this is done by computing the gradient of a negative loss with respect to the sample
 (negating effectively turns the optimization problem into maximizing the loss) 
-then updating the image in the direction of the gradient, and then projecting to ensure the remains 
+then updating the image in the direction of the gradient, and then projecting to ensure it remains 
 within a specified norm. The iterative updates create an adversarial example that causes the model 
 to misclassify objects or miss detections.
 """
@@ -401,13 +402,6 @@ part6_q2 = r"""
 **Your answer:**
 
 
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
-
 """
 
 
@@ -416,25 +410,19 @@ part6_q3 = r"""
 
 The model did not detect the objects in the pictures well.
 
-- 'cat_behind_leaves': demonstrates occlusion. The leaves block part of the cat's face. The model
-did not detect any object in the picture.
+- 'cat_behind_leaves': demonstrates occlusion. The leaves block part of the cat's face, hiding cat features crucial 
+for the model to detect a cat. The model did not detect any object in the picture.
 - 'dog_at_night': demonstrates illumination conditions. This image is taken at night with low light. The model detected the object's position correctly
-but classified the dog as a bird with low confidence (0.27).
+but classified the dog as a bird with low confidence (0.27). In the low light only part of the shape of the dog is
+visible, making it difficult for the model to detect dog features.
 - 'speeding_car': demonstrates blurring. This is a blurred image of a speeding racing car. The model detected 2 objects in the area of the car.
-The larger object includes most of the car body, and it was classified as a car with low confidence (0.7). The smaller
-object included the front of the car, and was classified as a car with low confidence (0.31).
+The larger object includes most of the car body, and it was classified as a car with low confidence (0.71). The smaller
+object includes the front of the car, and was classified as a car with low confidence (0.31). The double detection
+of a car is probably because the blurring deformed the shape and boundries of the car.
 
 """
 
 part6_bonus = r"""
 **Your answer:**
-
-
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
 
 """
