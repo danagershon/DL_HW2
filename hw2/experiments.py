@@ -16,7 +16,6 @@ from .mlp import MLP
 from .training import ClassifierTrainer
 from .classifier import ArgMaxClassifier, BinaryClassifier, select_roc_thresh
 
-from .optimizers import MomentumSGD #TODO LEFT is this allowed
 
 DATA_DIR = os.path.expanduser("~/.pytorch-datasets")
 
@@ -54,7 +53,8 @@ def mlp_experiment(
     #  Note: use print_every=0, verbose=False, plot=False where relevant to prevent
     #  output from this function.
     # ====== YOUR CODE: ======
-    raise NotImplementedError()
+    # raise NotImplementedError()
+    model = thresh = valid_acc = test_acc = None
     # ========================
     return model, thresh, valid_acc, test_acc
 
@@ -87,7 +87,7 @@ def cnn_experiment(
     activation_params ={},
     trainer_cls = ClassifierTrainer, #Trainer
     classifier_cls = ArgMaxClassifier, #Classifier
-    optimizer_cls = "SGD", #Optimizer
+    optimizer_cls = "Adam", #Optimizer
     loss_fn = torch.nn.CrossEntropyLoss(), #Loss
     momentum: float = 0.9, #Momentum
     # for ResNet:
@@ -189,7 +189,6 @@ def cnn_experiment(
         early_stopping=early_stopping,
         checkpoints=checkpoints,
         max_batches=batches,
-        #print_every=10,
     ) 
     
     #fix cfg:
