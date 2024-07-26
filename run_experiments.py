@@ -171,14 +171,17 @@ def define_exp_params():
     results_i_dir = get_next_results_dir()
         
     exp_params = {  # default params
-        "pool_every": 6,
-        "hidden_dims": [100],
         "optimizer_cls": "Adam",
         "activation_type": "lrelu",
         "activation_params": {"negative_slope": 0.01}  # default
     }
     
     exp1_1_params = exp_params.copy()
+    exp1_1_params.update({
+        "pool_every": 6,
+        "hidden_dims": [512],
+        "model": "cnn"
+    })
     exp1_1 = Expirement(
         run_name="exp1_1",
         results_i_dir=results_i_dir,
@@ -187,6 +190,11 @@ def define_exp_params():
     )
     
     exp1_2_params = exp_params.copy()
+    exp1_2_params.update({
+        "pool_every": 10,
+        "hidden_dims": [256],
+        "model": "cnn"
+    })
     exp1_2 = Expirement(
         run_name="exp1_2",
         results_i_dir=results_i_dir,
@@ -195,6 +203,11 @@ def define_exp_params():
     )
     
     exp1_3_params = exp_params.copy()
+    exp1_3_params.update({
+        "pool_every": 4,
+        "hidden_dims": [512],
+        "model": "cnn"
+    })
     exp1_3 = Expirement(
         run_name="exp1_3",
         results_i_dir=results_i_dir,
@@ -204,9 +217,9 @@ def define_exp_params():
     
     exp1_4_params = exp_params.copy()
     exp1_4_params.update({
-	"pool_every":12,
-	"hidden_dims":[128],
-	"model":"resnet"
+        "pool_every": 12,
+        "hidden_dims": [128],
+        "model": "resnet"
     })
     exp1_4 = Expirement(
         run_name="exp1_4",
