@@ -216,9 +216,10 @@ The opposite case of high False Negative Rate can happen when we under expose it
 
 part3_q3 = r"""
 **Your answer:**
-1. In this scenario we don't mind having a lot of false negatives (i.e missing people with the disease) because in that case they'll still survive and even show symptoms to allow for treatment later. So in this case we want a high True positive rate at a cost of a high False negative rate -> The optimal point of us is shifted to the top right of the ROC diagram.
+1. In this scenario we don't mind having a lot of false negatives (i.e missing people with the disease) because in that case they'll still survive and even show symptoms to allow for treatment later. So in this case we want a high True positive rate at a cost of a high False negative rate -> The optimal point of the ROC diagram is shifted to the region of high TPR even if we need to get slightly higher FNR.
 
-2. In this scenario, even missed patient will result in death, and it is better to send them to the expensive test to even have a chance to save them. Thus we can't allow missing patients, and we need a low False Negative rate. This will come at the cost of a low True Negative rate -> The optimal point is shifted to the bottom left of the ROC diagram.
+2. In this scenario, even missed patient will result in death, and it is better to send them to the expensive test to even have a chance to save them. Thus we can't allow missing patients, and we need a low False Negative rate. This will come at the cost of a low True Negative rate -> The optimal point of the ROC diagram is shifted to the region of high FNR (while keeping high TPR) even if we need to get slightly lower the TNR.
+
 
 """
 
@@ -228,8 +229,9 @@ part3_q4 = r"""
 There are many disadvantages to using MLP for this task:
 1. Sentence length: The MLP has a fixed size, which limits the size of the sentence the model allows. And also, in reality most of the sentences will be short and the MLP won't know how to train the weights that correlate to the last words that rarely appear in this fixed sentence size. This way when it gets a longer than average sentence, it will most probably not perform well.
 
-2. Word Shifting: The MLP will have to relearn the sentiment for the sentences I like apples and Hi, I like apples, because every word is now in a different input node and the weights are not shared. This both means that the model has to learn multiple times for similar sentences, and that this will greatly hurt the model's performance because of similar but contradictory sentences like I like apples, I don't like apples.
+2. Word Shifting: The MLP will have to relearn the sentiment for the sentences "I like apples" and "Hi, I like apples", because every word is now in a different input node and the weights are not shared. This both means that the model has to learn multiple times for similar sentences, and that this will greatly hurt the model's performance because of similar but contradictory sentences like I like apples, I don't like apples.
 
+3. Sentence Context: In the sentence "My friend hates apples, I agree with him" the word "agree" is in a negative context even though the word "agree" is usually positive. This means that the model has to consider the entire sentence and previous sentences to understand the correct sentiment. This paired with irony, where the sentences mean the opposite to the usual sense makes it way harder for an MLP to learn for this objective.
 """
 # ==============
 # Part 4 (CNN) answers
@@ -276,7 +278,7 @@ Which is the conversion from $C_{in}$ channels to $K$ channels [Assuming padding
 
 The amount of operations depends on the image input so we'll label it by $I=W\cdot H$.
 
-For the CNN:
+For the Vanilla Block:
 input_size doesnt change. Number of operations:  
 - Layer 1: $256 \cdot I \cdot 9 \cdot 256$  
 - Layer 2: $256 \cdot I \cdot 9 \cdot 256$  
@@ -290,14 +292,14 @@ input_size changes because the channels change. Number of operations:
 Sum: $29,696 \cdot I$  
 
 So for $I=32^2$ we get:  
-CNN: $1,207,959,552$ operations  
+Vanilla Block: $1,207,959,552$ operations  
 Bottleneck: $30,408,704$ operations  
 
 The bottleneck has much less operations.
 
 3. 
-- (1) The CNN has better expressiveness spatially because it uses F=3 for all layers (which the bottleneck only uses F=3 for the middle layer) and the receptive field of each neuron effectively triples after each layer, which allows for deeper spatial combinations.
-- (2) The bottleneck has more abilities to combine the input across feature maps because it has a bigger number of channels and can create deeper combinations from them, even if every featuremap is spatially simpler than the CNN.
+- (1) The Vanilla Block has better expressiveness spatially because it uses F=3 for all layers (while the bottleneck only uses F=3 for the middle layer) so the receptive field of each neuron effectively triples after each layer, which allows for deeper spatial combinations. In other words the 1x1 convolutions aren't effective in finding spatial patterns because they have a very small feature map, and this hurts the spatial pattern capabilities of the bottleneck models.
+- (2) The bottleneck has more abilities to combine the input across feature maps because it has a bigger number of channels and can create deeper combinations from them, even if every featuremap is spatially simpler than the Vanilla Block. Furthermore, the increase of the number of channels of the Bottleneck allows it to learn low level feature maps and combine than with high level feature maps to create better combinations across the feature maps.
 
 """
 
