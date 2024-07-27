@@ -199,7 +199,6 @@ def cnn_experiment(
     # ========================
 
     save_experiment(run_name, out_dir, cfg, fit_res)
-    return fit_res  # TODO LEFT:  don't forget to remove
 
 
 def save_experiment(run_name, out_dir, cfg, fit_res):
