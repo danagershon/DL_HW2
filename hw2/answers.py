@@ -218,7 +218,7 @@ part3_q3 = r"""
 **Your answer:**
 1. In this scenario we don't mind having a lot of false negatives (i.e missing people with the disease) because in that case they'll still survive and even show symptoms to allow for treatment later. So in this case we want a high True positive rate at a cost of a high False negative rate -> The optimal point of the ROC diagram is shifted to the region of high TPR even if we need to get slightly higher FNR.
 
-2. In this scenario, even missed patient will result in death, and it is better to send them to the expensive test to even have a chance to save them. Thus we can't allow missing patients, and we need a low False Negative rate. This will come at the cost of a low True Negative rate -> The optimal point of the ROC diagram is shifted to the region of high FNR (while keeping high TPR) even if we need to get slightly lower the TNR.
+2. In this scenario, even missed patient will result in death, and it is better to send them to the expensive test to even have a chance to save them. Thus we can't allow missing patients, and we need a low False Negative rate. This will come at the cost of a low True Negative rate -> The optimal point of the ROC diagram is shifted to the region of lower FNR (while keeping high TPR) even if we need to get slightly lower the TNR.
 
 
 """
@@ -263,13 +263,13 @@ part4_q1 = r"""
 
 1. Number of params for a convolutional layer is $K\cdot (C_{in}\cdot F^2+1)$  
 
-- For the CNN we have two 3x3 convs on $K=256, C_{in}=256$ which gives $2\cdot 256\cdot (256\cdot 3^2+1)=1,180,160$ params.  
+- For the Vanilla Block we have two 3x3 convs on $K=256, C_{in}=256$ which gives $2\cdot 256\cdot (256\cdot 3^2+1)=1,180,160$ params.  
 
 - For the Bottleneck block we have:  
 Layer 1: $F=1, K=64, C_{in}=256 \Rightarrow No.params = 64\cdot (256\cdot 1^2+1) = 16,448$  
 Layer 2: $F=3, K=64, C_{in}=64 \Rightarrow No.params = 64\cdot (64\cdot 3^2+1) = 36,928$  
 Layer 3: $F=1, K=256, C_{in}=64 \Rightarrow No.params = 256\cdot (64\cdot 1^2+1) = 16,640$  
-Overall the Bottleneck has $70,016$ params which is way less than the naive CNN.
+Overall the Bottleneck has $70,016$ params which is way less than the Vanilla Block.
 
 2. Number of operations for a convolutional layer is about $C_{in} \cdot I \cdot F^2 \cdot K$  
 Where $I=W\cdot H$ - the spatial input_size for a layer, $O=W_{out}\cdot H_{out}$ - output_size for the layer.  
